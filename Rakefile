@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/lib/spreadsheet_architect/version.rb')
+require File.expand_path(File.dirname(__FILE__) + '/lib/rearmed/version.rb')
 require 'bundler/gem_tasks'
 
 task :test do 

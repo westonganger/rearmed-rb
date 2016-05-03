@@ -1,46 +1,17 @@
 #!/usr/bin/env ruby -w
-require "spreadsheet_architect"
 require 'yaml'
-require 'active_record'
 require 'minitest'
+require 'lib/rearmed.rb'
+
+puts "sort_by: #{["1.1","1.11","1.2","1.22"].sort_by{|x| x}}"
+puts "natural_sort_by: #{["1.1","1.11","1.2","1.22"].natural_sort_by{|x| Rearmed.naturalize_str(x)}}"
+
+=begin
 
 require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 
 class TestSpreadsheetArchitect < MiniTest::Test
-  class Post < ActiveRecord::Base
-    include SpreadsheetArchitect
-
-    def self.spreadsheet_columns
-      [:name, :title, :content, :votes, :ranking]
-    end
-
-    def ranking
-      1
-    end
-  end
-
-  class OtherPost < ActiveRecord::Base
-    include SpreadsheetArchitect
-  end
-
-  class PlainPost
-    include SpreadsheetArchitect
-
-    def self.spreadsheet_columns
-      [:name, :title, :content]
-    end
-
-    def name
-      "the name"
-    end
-
-    def title
-      "the title"
-    end
-
-    def content
-      "the content"
-    end
+  class Post
   end
 
   test "test_spreadsheet_options" do
@@ -71,14 +42,4 @@ class TestToOds < MiniTest::Test
     assert_equal(true, p.is_a?(String))
   end
 end
-
-class TestToXlsx < MiniTest::Test
-  test 'test_class_method' do
-    p = Post.to_xlsx(spreadsheet_columns: [:name, :votes, :content, :ranking])
-    assert_equal(true, p.is_a?(String))
-  end
-  test 'test_chained_method' do
-    p = Post.order("name asc").to_xlsx(spreadsheet_columns: [:name, :votes, :content, :ranking])
-    assert_equal(true, p.is_a?(String))
-  end
-end
+=end
