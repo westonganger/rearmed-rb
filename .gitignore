@@ -1,0 +1,8 @@
+.bundle/
+Gemfile.lock
+coverage/
+doc/
+pkg/
+spec/reports/
+tmp/
+test/*.sqlite3.db
