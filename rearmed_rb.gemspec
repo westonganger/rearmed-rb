@@ -14,13 +14,9 @@ Gem::Specification.new do |s|
   s.files = Dir.glob("{lib/**/*}") + %w{ LICENSE README.md Rakefile CHANGELOG.md }
   s.test_files  = Dir.glob("{test/**/*}")
 
-  s.add_runtime_dependency 'method_source'
-
   s.add_development_dependency 'rake'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'bundler'
-  s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'activerecord'
 
   s.required_ruby_version = '>= 1.9.3'
   s.require_path = 'lib'

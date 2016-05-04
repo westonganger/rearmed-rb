@@ -1,18 +1,31 @@
 module Rearmed
   def self.recursive_require(path, file_name="**/*.rb")
-    file_name = File.join(File.dirname(__FILE__), path, file_name)
-    Dir[file_name].each{|file| require file}
+    require_each(path, file_name)
+  end
+
+  class << self
+    alias_method :recursive_require_folder, :recursive_require
   end
 
   def self.require_folder(path, file_name="*.rb")
-    file_name = File.join(File.dirname(__FILE__), path, file_name)
-    Dir[file_name].each{|file| require file}
+    require_each(path, file_name)
   end
 
   def self.naturalize_str(str)
-    #TODO: BENCHMARK
-    #str.split(/(\d+)/).map{|a| a =~ /\d+/ ? a.to_i : a}
-    str.scan(/[^\d\.]+|[\d\.]+/).collect{|f| f.match(/\d+(\.\d+)?/) ? f.to_f : f}
+    str.to_s.split(/(\d+)/).map{|a| a =~ /\d+/ ? a.to_i : a}
+  end
+
+  class NaturalSortBlockFoundError < StandardError
+    def initialize(klass=nil)
+      super("Reaarmed doesn't yet support blocks on the natural_sort method")
+    end
+  end
+
+  private
+
+  def self.require_each(path, file_name)
+    file_name = File.join(File.dirname(__FILE__), path, file_name)
+    Dir[file_name].each{|file| require file}
   end
 end
 
@@ -30,6 +43,12 @@ if defined?(Rails)
     end
 
     if defined?(ActiveRecord)
+      ActiveRecord::FinderMethods.module_eval do
+        def all(*args)
+          args.any? ? apply_finder_options(args.first) : self
+        end
+      end
+
       ActiveRecord::Persistence::ClassMethods.module_eval do
         def update_columns(attributes)
           raise ActiveRecordError, "cannot update a new record" if new_record?
@@ -52,8 +71,32 @@ if defined?(Rails)
   end
 end
 
-Array.module_eval do 
-  def natural_sort_by(&block)
-    sort_by{|x| Rearmed.naturalize_str(eval(block.source))}
+Enumerable.module_eval do 
+  def natural_sort_by
+    sort_by{|x| Rearmed.naturalize_str(yield(x))}
+  end
+end
+
+Array.module_eval do
+  def find(val)
+    i = index(val)
+    if i
+      return true if [nil, false].include?(val)
+      return self[i]
+    else
+      return nil
+    end
+  end
+
+  def natural_sort(&block)
+    if block_given?
+      raise Rearmed::NaturalSortBlockFoundError
+    else
+      block = Proc.new{|a,b| Rearmed.naturalize_str(a) <=> Rearmed.naturalize_str(b)}
+    end
+
+    sort do |a,b| 
+      block.call(a,b)
+    end
   end
 end
