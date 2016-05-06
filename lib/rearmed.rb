@@ -15,6 +15,11 @@ module Rearmed
     str.to_s.split(/(\d+)/).map{|a| a =~ /\d+/ ? a.to_i : a}
   end
 
+  def valid_float(str)
+    #!!Float(self) rescue false # didn't use this one because rescue is expensive
+    str =~ /(^(\d+)(\.)?(\d+)?)|(^(\d+)?(\.)(\d+))/
+  end
+
   class NaturalSortBlockFoundError < StandardError
     def initialize(klass=nil)
       super("Reaarmed doesn't yet support blocks on the natural_sort method")
@@ -98,5 +103,11 @@ Array.module_eval do
     sort do |a,b| 
       block.call(a,b)
     end
+  end
+end
+
+String.module_eval do
+  def valid_float?
+    Rearmed.valid_float(self)
   end
 end

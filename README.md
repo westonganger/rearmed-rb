@@ -22,6 +22,11 @@ Rearmed.require_folder(my_fodler_path) # all .rb files in this folder only
 [1.1, 1.11, 1.2].find(1.11) # returns my_value if found
 
 
+### String Methods
+"1.9".valid_float? # => true
+"test".valid_float? # => false
+
+
 ### Rails 4 Methods for use with Rails 3
 my_hash.compact
 my_hash.compact!
