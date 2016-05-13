@@ -15,13 +15,9 @@ module Rearmed
     str.to_s.split(/(\d+)/).map{|a| a =~ /\d+/ ? a.to_i : a}
   end
 
-  def valid_float(str)
-    str =~ /(^(\d+)(\.)?(\d+)?)|(^(\d+)?(\.)(\d+))/
-  end
-
-  class NaturalSortBlockFoundError < StandardError
+  class BlockFoundError < StandardError
     def initialize(klass=nil)
-      super("Reaarmed doesn't yet support blocks on the natural_sort method")
+      super("Rearmed doesn't yet support a block on this method.")
     end
   end
 
@@ -45,8 +41,118 @@ module Rearmed
   end
 end
 
+
+Object.class_eval do
+  def not_nil?
+    !nil?
+  end
+
+  def in?(obj)
+    obj.include(self)
+  end
+end
+
+
+Numeric.class_eval do 
+  def to_positive
+    if self < 0
+      -self
+    else
+      self
+    end
+  end
+end
+
+
+String.class_eval do
+  def valid_integer?
+    self =~ /^\d*$/
+  end
+
+  def valid_float?
+    self =~ /(^(\d+)(\.)?(\d+)?)|(^(\d+)?(\.)(\d+))/
+  end
+
+  def to_bool
+    if self =~ /^true$/
+      true
+    elsif self =~ /^false$/
+      false
+    else
+      raise(ArgumentError.new "incorrect element #{self}")
+    end
+  end
+end
+
+Date.class_eval do
+  def self.now
+    DateTime.now.to_date
+  end
+end
+
+
+Enumerable.module_eval do 
+  def natural_sort_by
+    sort_by{|x| Rearmed.naturalize_str(yield(x))}
+  end
+
+  def natural_sort_by!
+    natural_sort_by(&yield).each_with_index do |item, i|
+      self[i] = item
+    end
+  end
+end
+
+
+Array.class_eval do
+  def index_all(item)
+    if block_given?
+      raise Rearmed::BlockFoundError
+    else
+      each_index.select{|i| arr[i] == item}
+    end
+  end
+
+  def natural_sort
+    if block_given?
+      raise Rearmed::BlockFoundError
+    else
+      block = Proc.new{|a,b| Rearmed.naturalize_str(a) <=> Rearmed.naturalize_str(b)}
+    end
+
+    sort do |a,b| 
+      block.call(a,b)
+    end
+  end
+
+  def natural_sort!
+    natural_sort(&yield).each_with_index do |item, i|
+      self[i] = item
+    end
+  end
+
+  def delete_first(item = (no_arg_passed = true; nil))
+    if block_given? && !no_arg_passed
+      raise Rearmed::BothArgAndBlockError
+    elsif block_given?
+      self.delete_at(index{|x| yield(x)})
+    elsif item || !no_arg_passed
+      self.delete_at(index(item) || length)
+    else
+      self.delete_at(0)
+    end
+  end
+end
+
+
 if defined?(Rails)
-  if Rails.version[0] == '3'
+  Hash.class_eval do
+    alias_method :only, :slice
+    alias_method :only!, :slice!
+  end
+
+
+  if Rails.version < 4.1
     Hash.class_eval do
       def compact
         self.select{|_, value| !value.nil?}
@@ -56,8 +162,12 @@ if defined?(Rails)
         self.reject!{|_, value| value.nil?}
       end
     end
+  end
 
+
+  if Rails.version[0] == '3'
     if defined?(ActiveRecord)
+
       ActiveRecord::FinderMethods.module_eval do
         def all(*args)
           args.any? ? apply_finder_options(args.first) : self
@@ -105,82 +215,5 @@ if defined?(Rails)
       end
 
     end
-  end
-end
-
-Enumerable.module_eval do 
-  def natural_sort_by
-    sort_by{|x| Rearmed.naturalize_str(yield(x))}
-  end
-
-  def natural_sort_by!
-    natural_sort_by(&yield).each_with_index do |item, i|
-      self[i] = item
-    end
-  end
-end
-
-Array.module_eval do
-  def index_all(item=(no_arg_passed = true;nil))
-    if !no_arg_passed && block_given?
-      raise Rearmed::BothArgAndBlockError
-    elsif !no_arg_passed
-      each_index.select{|i| arr[i] == item}
-    elsif block_given?
-      each_index.select{|i| yield(i)}
-    else
-      raise Rearmed::NoArgOrBlockGiven
-    end
-  end
-
-  def find(item=(no_arg_passed = true;nil))
-=begin
-    if !no_arg_passed && block_given?
-      raise Rearmed::BothArgAndBlockError
-    elsif !no_arg_passed
-      if !index_all().empty?
-        true
-      end
-      index_all()[0]
-    else
-      raise Rearmed::NoArgOrBlockGiven
-    end
-=end
-  end
-
-  def natural_sort(&block)
-    if block_given?
-      raise Rearmed::NaturalSortBlockFoundError
-    else
-      block = Proc.new{|a,b| Rearmed.naturalize_str(a) <=> Rearmed.naturalize_str(b)}
-    end
-
-    sort do |a,b| 
-      block.call(a,b)
-    end
-  end
-
-  def natural_sort!
-    natural_sort(&yield).each_with_index do |item, i|
-      self[i] = item
-    end
-  end
-
-  def delete_first(item = (no_arg_passed = true; nil))
-    if block_given? && !no_arg_passed
-      raise Rearmed::BothArgAndBlockError
-    elsif block_given?
-      self.delete_at(index{|x| yield(x)})
-    elsif item || !no_arg_passed
-      self.delete_at(index(item) || length)
-    else
-      self.delete_at(0)
-    end
-  end
-end
-
-String.module_eval do
-  def valid_float?
-    Rearmed.valid_float(self)
   end
 end
