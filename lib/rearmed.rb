@@ -16,13 +16,24 @@ module Rearmed
   end
 
   def valid_float(str)
-    #!!Float(self) rescue false # didn't use this one because rescue is expensive
     str =~ /(^(\d+)(\.)?(\d+)?)|(^(\d+)?(\.)(\d+))/
   end
 
   class NaturalSortBlockFoundError < StandardError
     def initialize(klass=nil)
       super("Reaarmed doesn't yet support blocks on the natural_sort method")
+    end
+  end
+
+  class NoArgOrBlockGivenError < StandardError
+    def initialize(klass=nil)
+      super("Must pass an argument or a block.")
+    end
+  end
+
+  class BothArgAndBlockError < StandardError
+    def initialize(klass=nil)
+      super("Arguments and blocks must be used seperately.")
     end
   end
 
@@ -35,8 +46,7 @@ module Rearmed
 end
 
 if defined?(Rails)
-  # Rails 3
-  if Rails.version =~ /^3\./
+  if Rails.version[0] == '3'
     Hash.class_eval do
       def compact
         self.select{|_, value| !value.nil?}
@@ -72,6 +82,28 @@ if defined?(Rails)
           updated_count == 1
         end
       end
+
+      ActiveRecord::Relation.class_eval do
+        def pluck(*args)
+          args.map! do |column_name|
+            if column_name.is_a?(Symbol) && column_names.include?(column_name.to_s)
+              "#{connection.quote_table_name(table_name)}.#{connection.quote_column_name(column_name)}"
+            else
+              column_name.to_s
+            end
+          end
+
+          relation = clone
+          relation.select_values = args
+          klass.connection.select_all(relation.arel).map! do |attributes|
+            initialized_attributes = klass.initialize_attributes(attributes)
+            attributes.map do |key, attr|
+              klass.type_cast_attribute(key, initialized_attributes)
+            end
+          end
+        end
+      end
+
     end
   end
 end
@@ -80,17 +112,40 @@ Enumerable.module_eval do
   def natural_sort_by
     sort_by{|x| Rearmed.naturalize_str(yield(x))}
   end
+
+  def natural_sort_by!
+    natural_sort_by(&yield).each_with_index do |item, i|
+      self[i] = item
+    end
+  end
 end
 
 Array.module_eval do
-  def find(val)
-    i = index(val)
-    if i
-      return true if [nil, false].include?(val)
-      return self[i]
+  def index_all(item=(no_arg_passed = true;nil))
+    if !no_arg_passed && block_given?
+      raise Rearmed::BothArgAndBlockError
+    elsif !no_arg_passed
+      each_index.select{|i| arr[i] == item}
+    elsif block_given?
+      each_index.select{|i| yield(i)}
     else
-      return nil
+      raise Rearmed::NoArgOrBlockGiven
     end
+  end
+
+  def find(item=(no_arg_passed = true;nil))
+=begin
+    if !no_arg_passed && block_given?
+      raise Rearmed::BothArgAndBlockError
+    elsif !no_arg_passed
+      if !index_all().empty?
+        true
+      end
+      index_all()[0]
+    else
+      raise Rearmed::NoArgOrBlockGiven
+    end
+=end
   end
 
   def natural_sort(&block)
@@ -102,6 +157,24 @@ Array.module_eval do
 
     sort do |a,b| 
       block.call(a,b)
+    end
+  end
+
+  def natural_sort!
+    natural_sort(&yield).each_with_index do |item, i|
+      self[i] = item
+    end
+  end
+
+  def delete_first(item = (no_arg_passed = true; nil))
+    if block_given? && !no_arg_passed
+      raise Rearmed::BothArgAndBlockError
+    elsif block_given?
+      self.delete_at(index{|x| yield(x)})
+    elsif item || !no_arg_passed
+      self.delete_at(index(item) || length)
+    else
+      self.delete_at(0)
     end
   end
 end
