@@ -178,9 +178,3 @@ Array.module_eval do
     end
   end
 end
-
-String.module_eval do
-  def valid_float?
-    Rearmed.valid_float(self)
-  end
-end
