@@ -105,6 +105,10 @@ end
 
 
 Array.class_eval do
+  def not_empty?
+    !empty?
+  end
+
   def index_all(item)
     if block_given?
       raise Rearmed::BlockFoundError
@@ -207,8 +211,12 @@ if defined?(Rails)
           relation.select_values = args
           klass.connection.select_all(relation.arel).map! do |attributes|
             initialized_attributes = klass.initialize_attributes(attributes)
-            attributes.map do |key, attr|
-              klass.type_cast_attribute(key, initialized_attributes)
+            if attributes.length > 1
+              attributes.map do |key, attr|
+                klass.type_cast_attribute(key, initialized_attributes)
+              end
+            else
+              klass.type_cast_attribute(attributes.keys.first, initialized_attributes)
             end
           end
         end
