@@ -44,12 +44,4 @@ module Rearmed
     Dir[file_name].each{|file| require file}
   end
 
-  ENABLED = {
-    string: {valid_float: true, not_nil: true, to_bool: true},
-    boolean: {is_true: true, is_false: true},
-    array: {natural_sort: true, index_all: true, find: true},
-    rails_3: {hash: false, pluck: true, update_columns: true, all: true},
-    enumerable: {natural_sort_by: true},
-    object: {in: true}
-  }
 end

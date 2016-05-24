@@ -20,18 +20,26 @@ Rearmed.require_folder(my_fodler_path) # all .rb files in this folder only
 ### Array Methods
 [1.1, 1.11, 1.2].natural_sort
 [1.1, 1.11, 1.2].find(1.11) # returns my_value if found
+[1.1, 1.11, 1.2, 1.11].index_all(1.11) # [1, 3]
 
 
 ### String Methods
 "1.9".valid_float? # => true
 "test".valid_float? # => false
 
+"true".to_bool # => true
+"false".to_bool # => false
+
+### Object
+"bar".in?(["foo","bar"]) # => true
+
 
 ### Rails 4 Methods for use with Rails 3
 my_hash.compact
 my_hash.compact!
-ArModel.all # Now returns AR relation
-ar_relation.update_columns(a: 'foo', b: 'bar')
+Post.all.order(name: :asc) # Now returns AR relation
+Post.first.update_columns(a: 'foo', b: 'bar')
+Post.where(company_id: 1).pluck(:name, :id)
 ```
 
 
