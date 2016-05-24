@@ -134,7 +134,6 @@ Array.module_eval do
   end
 
   def find(item=(no_arg_passed = true;nil))
-=begin
     if !no_arg_passed && block_given?
       raise Rearmed::BothArgAndBlockError
     elsif !no_arg_passed
@@ -145,19 +144,14 @@ Array.module_eval do
     else
       raise Rearmed::NoArgOrBlockGiven
     end
-=end
   end
 
   def natural_sort(&block)
     if block_given?
       raise Rearmed::NaturalSortBlockFoundError
-    else
-      block = Proc.new{|a,b| Rearmed.naturalize_str(a) <=> Rearmed.naturalize_str(b)}
     end
 
-    sort do |a,b| 
-      block.call(a,b)
-    end
+    sort{|a,b| Rearmed.naturalize_str(a.to_s) <=> Rearmed.naturalize_str(b.to_s)}
   end
 
   def natural_sort!

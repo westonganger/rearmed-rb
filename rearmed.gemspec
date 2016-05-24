@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rearmed/version.rb'
 
 Gem::Specification.new do |s|
-  s.name        = 'rearmed_rb'
+  s.name        = 'rearmed'
   s.version     =  Rearmed::VERSION
   s.author	= "Weston Ganger"
   s.email       = 'westonganger@gmail.com'
