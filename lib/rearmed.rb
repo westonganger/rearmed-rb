@@ -33,101 +33,38 @@ module Rearmed
     end
   end
 
+  def dig(collection, *values)
+    current_val = nil
+    values.each_with_index do |val,i|
+      if i+1 == values.length
+        current_val = collection[val]
+      elsif val.is_a?(Array)
+        if values[i+1].is_a?(Integer)
+          next
+        else
+          current_val = nil
+          break
+        end
+      elsif val.is_a?(Hash)
+        if ['Symbol','String'].include?(values[i+1].class.name)
+          next
+        else
+          current_val = nil
+          break
+        end
+      else
+        current_val = nil
+        break 
+      end
+    end
+
+    return current_val
+  end
+
   private
 
   def self.require_each(path, file_name)
     file_name = File.join(File.dirname(__FILE__), path, file_name)
     Dir[file_name].each{|file| require file}
-  end
-end
-
-
-Object.class_eval do
-  def not_nil?
-    !nil?
-  end
-
-  def in?(obj)
-    obj.include(self)
-  end
-end
-
-String.class_eval do
-  def valid_integer?
-    self =~ /^\d*$/
-  end
-
-  def valid_float?
-    self =~ /(^(\d+)(\.)?(\d+)?)|(^(\d+)?(\.)(\d+))/
-  end
-
-  def to_bool
-    if self =~ /^true$/
-      true
-    elsif self =~ /^false$/
-      false
-    else
-      raise(ArgumentError.new "incorrect element #{self}")
-    end
-  end
-end
-
-Date.class_eval do
-  def self.now
-    DateTime.now.to_date
-  end
-end
-
-Array.class_eval do
-  def not_empty?
-    !empty?
-  end
-
-  def index_all(item)
-    if block_given?
-      raise Rearmed::BlockFoundError
-    else
-      each_index.select{|i| arr[i] == item}
-    end
-  end
-
-  def natural_sort
-    if block_given?
-      raise Rearmed::BlockFoundError
-    else
-      block = Proc.new{|a,b| Rearmed.naturalize_str(a) <=> Rearmed.naturalize_str(b)}
-    end
-
-    sort do |a,b| 
-      block.call(a,b)
-    end
-  end
-
-  def natural_sort!
-    natural_sort(&yield).each_with_index do |item, i|
-      self[i] = item
-    end
-  end
-
-  def delete_first(item = (no_arg_passed = true; nil))
-    if block_given? && !no_arg_passed
-      raise Rearmed::BothArgAndBlockError
-    elsif block_given?
-      self.delete_at(index{|x| yield(x)})
-    elsif item || !no_arg_passed
-      self.delete_at(index(item) || length)
-    else
-      self.delete_at(0)
-    end
-  end
-end
-
-
-if defined?(Rails)
-  Hash.class_eval do
-    # DONT ALIAS ACTIVE SUPPORT
-
-    alias_method :only, :slice
-    alias_method :only!, :slice!
   end
 end

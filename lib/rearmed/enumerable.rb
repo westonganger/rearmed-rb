@@ -1,5 +1,7 @@
+enumerable_enabled = Rearmed::ENABLED&[:enumerable] == true
+
 Enumerable.module_eval do 
-  if Rearmed::ENABLED&[:enumerable]&[:natural_sort_by] || Rearmed::ENABLED&[:enumerable] == true
+  if enumerable_enabled || Rearmed.dig(Rearmed::ENABLED, :enumerable, :natural_sort_by) == true
     def natural_sort_by
       sort_by{|x| Rearmed.naturalize_str(yield(x))}
     end

@@ -1,5 +1,13 @@
+array_enabled = Rearmed::ENABLED&[:array] == true
+
 Array.module_eval do
-  if Rearmed::ENABLED&[:array]&[:index_all] || Rearmed::ENABLED&[:array] == true
+  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :not_empty) == true
+    def not_empty?
+      !empty?
+    end
+  end
+
+  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :index_all) == true
     def index_all(item=(no_arg_passed = true;nil))
       if !no_arg_passed && block_given?
         raise Rearmed::BothArgAndBlockError
@@ -13,24 +21,7 @@ Array.module_eval do
     end
   end
 
-  if Rearmed::ENABLED&[:array]&[:find] || Rearmed::ENABLED&[:array] == true
-    def find(item=(no_arg_passed = true;nil))
-=begin
-      if !no_arg_passed && block_given?
-        raise Rearmed::BothArgAndBlockError
-      elsif !no_arg_passed
-        if !index_all().empty?
-          true
-        end
-        index_all()[0]
-      else
-        raise Rearmed::NoArgOrBlockGiven
-      end
-=end
-    end
-  end
-
-  if Rearmed::ENABLED&[:array]&[:natural_sort] || Rearmed::ENABLED&[:array] == true
+  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :natural_sort) == true
     def natural_sort(&block)
       if block_given?
         raise Rearmed::NaturalSortBlockFoundError
@@ -46,7 +37,7 @@ Array.module_eval do
     end
   end
 
-  if Rearmed::ENABLED&[:array]&[:delete_first] || Rearmed::ENABLED&[:array] == true
+  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :delete_first) == true
     def delete_first(item = (no_arg_passed = true; nil))
       if block_given? && !no_arg_passed
         raise Rearmed::BothArgAndBlockError

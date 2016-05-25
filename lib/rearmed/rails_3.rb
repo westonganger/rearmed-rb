@@ -1,5 +1,7 @@
+rails_3_enabled = Rearmed::ENABLED&[:rails_3] == true
+
 if defined?(Rails) && Rails.version[0] == '3'
-  if Rearmed::ENABLED&[:rails_3]&[:hash]&[:compact] || Rearmed::ENABLED&[:rails_3] == true
+  if rails_3_enabled || Rearmed.dig(Rearmed::ENABLED, :rails_3, :compact) == true
     Hash.class_eval do
       def compact
         self.select{|_, value| !value.nil?}
@@ -12,7 +14,7 @@ if defined?(Rails) && Rails.version[0] == '3'
   end
 
   if defined?(ActiveRecord)
-    if Rearmed::ENABLED&[:rails3]&[:all] || Rearmed::ENABLED&[:rails_3] == true
+    if rails_3_enabled || Rearmed.dig(Rearmed::ENABLED, :rails_3, :all) == true
       ActiveRecord::FinderMethods.module_eval do
         def all(*args)
           args.any? ? apply_finder_options(args.first) : self
@@ -20,7 +22,7 @@ if defined?(Rails) && Rails.version[0] == '3'
       end
     end
 
-    if Rearmed::ENABLED&[:rails3]&[:update_columns] || Rearmed::ENABLED&[:rails_3] == true
+    if rails_3_enabled || Rearmed.dig(Rearmed::ENABLED, :rails_3, :update_columns) == true
       ActiveRecord::Persistence::ClassMethods.module_eval do
         def update_columns(attributes)
           raise ActiveRecordError, "cannot update a new record" if new_record?
@@ -41,7 +43,7 @@ if defined?(Rails) && Rails.version[0] == '3'
       end
     end
 
-    if Rearmed::ENABLED&[:rails3]&[:pluck] || Rearmed::ENABLED&[:rails_3] == true
+    if rails_3_enabled || Rearmed.dig(Rearmed::ENABLED, :rails_3, :pluck) == true
       ActiveRecord::Relation.class_eval do
         def pluck(*args)
           args.map! do |column_name|
