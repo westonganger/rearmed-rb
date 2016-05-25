@@ -35,11 +35,13 @@ module Rearmed
 
   def dig(collection, *values)
     current_val = nil
+    current_collection = nil
     values.each_with_index do |val,i|
       if i+1 == values.length
-        current_val = collection[val]
+        current_val = current_collection[val]
       elsif val.is_a?(Array)
         if values[i+1].is_a?(Integer)
+          current_collection = val
           next
         else
           current_val = nil
@@ -47,6 +49,7 @@ module Rearmed
         end
       elsif val.is_a?(Hash)
         if ['Symbol','String'].include?(values[i+1].class.name)
+          current_collection = val
           next
         else
           current_val = nil
@@ -67,4 +70,39 @@ module Rearmed
     file_name = File.join(File.dirname(__FILE__), path, file_name)
     Dir[file_name].each{|file| require file}
   end
+
+  ENABLED = {
+    date: {
+      now: false
+    },
+    object: {
+      not_nil: false,
+      in: false
+    },
+    array: {
+      not_empty: false,
+      index_all: false, 
+      delete_first: false,
+      dig: false
+    },
+    hash: {
+      only: false,
+      dig: false
+    },
+    enumerable: {
+      natural_sort: false,
+      natural_sort_by: false
+    },
+    string: {
+      valid_integer: false, 
+      valid_float: false,
+      to_bool: false
+    },
+    rails_3: {
+      update_columns: false,
+      pluck: false,
+      all: false,
+      hash_compact: false
+    }
+  }
 end

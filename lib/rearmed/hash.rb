@@ -1,4 +1,4 @@
-hash_enabled = Rearmed::ENABLED&[:hash] == true
+hash_enabled = Rearmed::ENABLED[:hash] == true
 
 Hash.class_eval do
   if hash_enabled || Rearmed.dig(Rearmed::ENABLED, :hash, :only) == true
@@ -15,6 +15,12 @@ Hash.class_eval do
       hash.default_proc = default_proc if default_proc
       replace(hash)
       omit
+    end
+  end
+
+  if RUBY_VERSION.to_f < 2.3 && hash_enabled || Rearmed.dig(Rearmed::ENABLED, :hash, :dig) == true
+    def dig(*args)
+      Rearmed.dig(self, *args)
     end
   end
 end

@@ -1,4 +1,4 @@
-object_enabled = Rearmed::ENABLED&[:object] == true
+object_enabled = Rearmed::ENABLED[:object] == true
 
 Object.class_eval do
 

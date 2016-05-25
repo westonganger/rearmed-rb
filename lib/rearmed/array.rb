@@ -1,4 +1,4 @@
-array_enabled = Rearmed::ENABLED&[:array] == true
+array_enabled = Rearmed::ENABLED[:array] == true
 
 Array.module_eval do
   if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :not_empty) == true
@@ -21,22 +21,6 @@ Array.module_eval do
     end
   end
 
-  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :natural_sort) == true
-    def natural_sort(&block)
-      if block_given?
-        raise Rearmed::NaturalSortBlockFoundError
-      end
-
-      sort{|a,b| Rearmed.naturalize_str(a.to_s) <=> Rearmed.naturalize_str(b.to_s)}
-    end
-
-    def natural_sort!
-      natural_sort(&yield).each_with_index do |item, i|
-        self[i] = item
-      end
-    end
-  end
-
   if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :delete_first) == true
     def delete_first(item = (no_arg_passed = true; nil))
       if block_given? && !no_arg_passed
@@ -48,6 +32,12 @@ Array.module_eval do
       else
         self.delete_at(0)
       end
+    end
+  end
+
+  if RUBY_VERSION.to_f < 2.3 && array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :dig) == true
+    def dig(*args)
+      Rearmed.dig(self, *args)
     end
   end
 end

@@ -7,10 +7,9 @@ module Rearmed
       contents = ""\
       "Rearmed.module_eval do\n"\
       "  const_set('ENABLED', {\n"\
-      "      string: {\n"\
       "      to_bool: false,\n"\
-      "      not_nil: false,\n"\
-      "      valid_float: false,\n"\
+      "      valid_integer: false,\n"\
+      "      valid_float: false\n"\
       "    },\n"\
       "    rails_3: {\n"\
       "      hash_compact: false,\n"\
@@ -19,19 +18,22 @@ module Rearmed
       "      all: false,\n"\
       "    },\n"\
       "    hash: {\n"\
-      "      : false,\n"\
+      "      only: false,\n"\
+      "      dig: false\n"\
       "    },\n"\
       "    array: {\n"\
-      "      natural_sort: false,\n"\
       "      index_all: false,\n"\
       "      find: false,\n"\
-      "      delete_first: false,\n"\
+      "      dig: false,\n"\
+      "      delete_first: false\n"\
       "    },\n"\
       "    enumerable: {\n"\
-      "      natural_sort_by: false,\n"\
+      "      natural_sort: false,\n"\
+      "      natural_sort_by: false\n"\
       "    },\n"\
       "    object: {\n"\
       "      in: false,\n"\
+      "      not_nil: false\n"\
       "    },\n"\
       "  }\n"\
       "end\n\n"\

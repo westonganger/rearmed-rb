@@ -1,4 +1,4 @@
-string_enabled = Rearmed::ENABLED&[:string] == true
+string_enabled = Rearmed::ENABLED[:string] == true
 
 String.class_eval do
   if string_enabled || Rearmed.dig(Rearmed::ENABLED, :string, :valid_integer) == true
