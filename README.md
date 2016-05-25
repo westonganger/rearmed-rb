@@ -62,22 +62,25 @@ puts array # => [2,4,1]
 ```ruby
 "1.9".valid_float? # => true
 "test".valid_float? # => false
+
+"true".to_bool # => true
+"false".to_bool # => false
 ```
 
 ### Rails Add-ons
+```ruby
 my_hash.only(:foo, :bar) # alias to slice
 my_hash.only!(:foo, :bar) # alias to slice!
+```
 
 ### Rails Method Backports
 ```ruby
 # Rails 3.* & 4.0 
 my_hash.compact
 my_hash.compact!
-
-# Rails 3
 Post.all # Now returns AR relation
 Post.first.update_columns(a: 'foo', b: 'bar')
-Post.limit(3).pluck(:name, :id) # adds multi column support ex. => [['first', 1], ['second', 2], ['third', 3]]
+Post.pluck(:name, :id) # adds multi column pluck support ex. => [['first', 1], ['second', 2], ['third', 3]]
 ```
 
 # Credits
