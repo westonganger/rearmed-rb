@@ -9,7 +9,7 @@ String.class_eval do
 
   if string_enabled || Rearmed.dig(Rearmed::ENABLED, :string, :valid_float) == true
     def valid_float?
-      Rearmed.valid_float(self)
+      str =~ /(^(\d+)(\.)?(\d+)?)|(^(\d+)?(\.)(\d+))/
     end
   end
 

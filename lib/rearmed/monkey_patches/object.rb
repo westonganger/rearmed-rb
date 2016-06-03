@@ -1,7 +1,6 @@
 object_enabled = Rearmed::ENABLED[:object] == true
 
 Object.class_eval do
-
   if object_enabled || Rearmed.dig(Rearmed::ENABLED, :object, :not_nil) == true
     def not_nil?
       !nil?
@@ -9,8 +8,11 @@ Object.class_eval do
   end
 
   if object_enabled || Rearmed.dig(Rearmed::ENABLED, :object, :in) == true
-    def in?(obj)
-      obj.include(self)
+    def in?(array, *more)
+      if !more.empty?
+        array = [array, *more]
+      end
+      array.include?(self)
     end
   end
 end

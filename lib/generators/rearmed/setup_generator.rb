@@ -1,27 +1,28 @@
 require 'rails/generators'
 
 module Rearmed
-  class Setup < Rails::Generators::Base
+  class SetupGenerator < Rails::Generators::Base
 
     def setup
       contents = <<eos
 Rearmed.module_eval do
   const_set('ENABLED', {
-      to_bool: false,
-      valid_integer: false,
-      valid_float: false
+    rails_4: {
+      find_relation_each: false,
+      find_in_relation_batches: false,
+      or: false,
+      link_to_confirm: false
     },
     rails_3: {
       hash_compact: false,
       pluck: false,
       update_columns: false,
-      all: false,
+      all: false
     },
-    rails_4: {
-      find_relation_each: false,
-      find_in_relation_batches: false,
-      or: false,
-      link_to_confirm: false,
+    string: {
+      to_bool: false,
+      valid_integer: false,
+      valid_float: false
     },
     hash: {
       only: false,
@@ -40,11 +41,14 @@ Rearmed.module_eval do
     object: {
       in: false,
       not_nil: false
+    },
+    date: {
+      now: false
     }
-  }
+  })
 end
 
-Rearmed.require_folder 'rearmed'
+require 'rearmed/apply_patches'
 eos
 
       create_file "config/initializers/rearmed.rb", contents
