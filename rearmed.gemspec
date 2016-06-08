@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     =  Rearmed::VERSION
   s.author	= "Weston Ganger"
   s.email       = 'westonganger@gmail.com'
-  s.homepage 	= 'https://github.com/westonganger/rearmed_rb'
+  s.homepage 	= 'https://github.com/westonganger/rearmed-rb'
   
   s.summary     = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, & Rails"
   s.description = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, & Rails"
