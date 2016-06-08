@@ -1,41 +1,27 @@
-array_enabled = Rearmed::ENABLED[:array] == true
+array_enabled = Rearmed.enabled_patches[:array] == true
 
 Array.module_eval do
-  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :not_empty) == true
+  if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :not_empty) == true
     def not_empty?
       !empty?
     end
   end
 
-  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :index_all) == true
-    def index_all(item=(no_arg_passed = true;nil))
-      if !no_arg_passed && block_given?
-        raise Rearmed::BothArgAndBlockError
-      elsif !no_arg_passed
-        each_index.select{|i| arr[i] == item}
-      elsif block_given?
-        each_index.select{|i| yield(i)}
-      else
-        raise Rearmed::NoArgOrBlockGiven
-      end
-    end
-  end
-
-  if array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :delete_first) == true
+  if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :delete_first) == true
     def delete_first(item = (no_arg_passed = true; nil))
       if block_given? && !no_arg_passed
-        raise Rearmed::BothArgAndBlockError
+        raise BothArgAndBlockError
       elsif block_given?
-        self.delete_at(index{|x| yield(x)})
+        self.delete_at(self.index{|x| yield(x)})
       elsif item || !no_arg_passed
-        self.delete_at(index(item) || length)
+        self.delete_at(self.index(item) || array.length)
       else
         self.delete_at(0)
       end
     end
   end
 
-  if RUBY_VERSION.to_f < 2.3 && array_enabled || Rearmed.dig(Rearmed::ENABLED, :array, :dig) == true
+  if RUBY_VERSION.to_f < 2.3 && array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :dig) == true
     def dig(*args)
       Rearmed.dig(self, *args)
     end
