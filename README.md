@@ -3,62 +3,61 @@
 
 A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, & Rails
 
+The difference between this library and others is that all monkey patching is performed in an opt-in way because you shouldnt be using methods you dont know about anyways. 
 
-Rearmed uses an opt-in way of monkey patching. Run `rails g rearmed:setup` to create a settings files in `config/initializers/rearmed.rb` where you can opt-in to the monkey patches available in the library. Set these values to true if you want to enable the applicable monkey patch
+For applicable methods I have placed the implementation inside the Rearmed module so if you don't like monkey patching or are working on the project with a team then you can use these methods instead. You can see how to use this implementation below the relevant methods here in the readme.
+
+```ruby
+# Gemfile
+
+gem 'rearmed'
+```
+
+Run `rails g rearmed:setup` to create a settings files in `config/initializers/rearmed.rb` where you can opt-in to the monkey patches available in the library. Set these values to true if you want to enable the applicable monkey patch.
 
 ```ruby
 # config/initializers/rearmed.rb
 
-Rearmed.module_eval do
-  const_set('ENABLED', {
-    rails_4: {
-      or: false,
-      link_to_confirm: false,
-      find_relation_each: false,
-      find_in_relation_batches: false,
-    },
-    rails_3: {
-      hash_compact: false,
-      pluck: false,
-      update_columns: false,
-      all: false,
-    },
-    string: {
-      to_bool: false,
-      valid_integer: false,
-      valid_float: false
-    },
-    hash: {
-      only: false,
-      dig: false
-    },
-    array: {
-      index_all: false,
-      find: false,
-      dig: false,
-      delete_first: false
-    },
-    enumerable: {
-      natural_sort: false,
-      natural_sort_by: false
-    },
-    object: {
-      in: false,
-      not_nil: false
-    },
-    date: {
-      now: false
-    }
+Rearmed.enabled_patches = {
+  rails_4: {
+    or: false,
+    link_to_confirm: false,
+    find_relation_each: false,
+    find_in_relation_batches: false,
+  },
+  rails_3: {
+    hash_compact: false,
+    pluck: false,
+    update_columns: false,
+    all: false,
+  },
+  string: {
+    to_bool: false,
+    valid_integer: false,
+    valid_float: false
+  },
+  hash: {
+    only: false,
+    dig: false
+  },
+  array: {
+    dig: false,
+    delete_first: false
+  },
+  enumerable: {
+    natural_sort: false,
+    natural_sort_by: false
+  },
+  object: {
+    in: false,
+    not_nil: false
+  },
+  date: {
+    now: false
   }
-end
+}
 
-Rearmed.require_folder 'rearmed'
-```
-
-### Rearmed Methods
-```ruby
-Rearmed.naturalize_str(my_string) # used in the natural sorting methods
-Rearmed.dig(hash_or_array, 1, :key, 2) # dig for either array or hash
+require 'rearmed/apply_patches'
 ```
 
 ### Object
@@ -71,8 +70,13 @@ my_var.in?(1,2,3) # or with splat arguments
 ### String
 ```ruby
 '123'.valid_integer?
-'123.123'.valid_float?
-'true'.to_bool
+# or without monkey patch: Rearmed.valid_integer?('123')
+
+'123.123'.valid_float? 
+# or without monkey patch: Rearmed.valid_float?('123')
+
+'true'.to_bool 
+# or without monkey patch: Rearmed.to_bool('true')
 ```
 
 ### Date
@@ -82,30 +86,43 @@ Date.now
 
 ### Enumerable Methods (Array, Hash, etc.)
 ```ruby
-['1.1', '1.11', '1.2'].natural_sort
-['1.1', '1.11', '1.2'].natural_sort{|a,b| b <=> a}
-[{version: "1.1"}, {version: "1.11"}, {version: "1.2"}].natural_sort_by{|x| x[:version]}
+items = ['1.1', '1.11', '1.2']
+items.natural_sort 
+items.natural_sort(reverse: true) # because natural_sort does not accept a block
+# or without monkey patch: Rearmed.natural_sort(items) or Rearmed.natural_sort(items, reverse: true)
+
+items = ['1.1', '1.11', '1.2']
+items.natural_sort{|a,b| b <=> a} 
+# or without monkey patch: Rearmed.natural_sort(items){|a,b| b <=> a}
+
+items = [{version: "1.1"}, {version: "1.11"}, {version: "1.2"}]
+items.natural_sort_by{|x| x[:version]} 
+# or without monkey patch: Rearmed.natural_sort_by(items){|x| x[:version]}
 
 # Only available on array and hash in Ruby 2.2.x or below
-[{foo: ['foo','bar']}, {test: 'thing'}].dig(1, :foo, 2) # => 'bar'
+items = [{foo: ['foo','bar']}, {test: 'thing'}]
+items.dig(1, :foo, 2) # => 'bar'
+# or without monkey patch: Rearmed.dig(items){|x| x[:version]}
 ```
 
 ### Array Methods
 ```ruby
-[1.1, 1.11, 1.2].find(1.11) # returns my_value if found
-[1,2,1,2,1].index_all(1) # => [0,2,4]
-
 array = [1,2,1,4,1]
 array.delete_first(1) # => 1
 puts array #=> [2,1,4,1]
 array.delete_first{|x| 1 == x} # => 1
 puts array # => [2,4,1]
+array.delete_first # => 2
+puts array # => [4,1]
 ```
 
 ### Hash Methods
 ```ruby
-{foo: 'foo', bar: 'bar'}.only(:foo) # => {foo: 'foo'}
-{foo: 'foo', bar: 'bar'}.only!(:bar)
+hash = {foo: 'foo', bar: 'bar', other: 'other'}
+hash.only(:foo, :bar) # => {foo: 'foo'}
+# or without monkey patch: Rearmed.only(hash, :foo, :bar)
+
+hash.only!(:foo, :bar)
 ```
 
 ### Rails

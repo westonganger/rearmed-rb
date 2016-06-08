@@ -1,24 +1,21 @@
-hash_enabled = Rearmed::ENABLED[:hash] == true
+hash_enabled = Rearmed.enabled_patches[:hash] == true
 
 Hash.class_eval do
-  if hash_enabled || Rearmed.dig(Rearmed::ENABLED, :hash, :only) == true
+  if hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :only) == true
     def only(*keys)
-      keys.map! { |key| convert_key(key) } if respond_to?(:convert_key, true)
-      keys.each_with_object(self.class.new) { |k, hash| hash[k] = self[k] if has_key?(k) }
+      Rearmed.only(self, *keys)
     end
 
     def only!(*keys)
-      keys.map! { |key| convert_key(key) } if respond_to?(:convert_key, true)
-      omit = slice(*self.keys - keys)
-      hash = slice(*keys)
-      hash.default      = default
-      hash.default_proc = default_proc if default_proc
+      keys.map!{ |key| convert_key(key) } if respond_to?(:convert_key, true)
+      omit = only(*self.keys - keys)
+      hash = only(*keys)
       replace(hash)
       omit
     end
   end
 
-  if RUBY_VERSION.to_f < 2.3 && hash_enabled || Rearmed.dig(Rearmed::ENABLED, :hash, :dig) == true
+  if RUBY_VERSION.to_f < 2.3 && hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :dig) == true
     def dig(*args)
       Rearmed.dig(self, *args)
     end

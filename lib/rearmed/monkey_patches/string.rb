@@ -1,27 +1,21 @@
-string_enabled = Rearmed::ENABLED[:string] == true
+string_enabled = Rearmed.enabled_patches[:string] == true
 
 String.class_eval do
-  if string_enabled || Rearmed.dig(Rearmed::ENABLED, :string, :valid_integer) == true
+  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_integer) == true
     def valid_integer?
-      self =~ /^\d*$/
+      Rearmed.valid_integer?(self)
     end
   end
 
-  if string_enabled || Rearmed.dig(Rearmed::ENABLED, :string, :valid_float) == true
+  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_float) == true
     def valid_float?
-      str =~ /(^(\d+)(\.)?(\d+)?)|(^(\d+)?(\.)(\d+))/
+      Rearmed.valid_float?(self)
     end
   end
 
-  if string_enabled || Rearmed.dig(Rearmed::ENABLED, :string, :to_bool) == true
+  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :to_bool) == true
     def to_bool
-      if self =~ /^true$/
-        true
-      elsif self =~ /^false$/
-        false
-      else
-        raise(ArgumentError.new "incorrect element #{self}")
-      end
+      Rearmed.to_bool(self)
     end
   end
 end
