@@ -4,11 +4,9 @@ module Rearmed
   class SetupGenerator < Rails::Generators::Base
 
     def setup
-      contents = <<eos
+      create_file "config/initializers/rearmed.rb", <<eos
 Rearmed.enabled_patches = {
   rails_4: {
-    find_relation_each: false,
-    find_in_relation_batches: false,
     or: false,
     link_to_confirm: false
   },
@@ -17,6 +15,12 @@ Rearmed.enabled_patches = {
     pluck: false,
     update_columns: false,
     all: false
+  },
+  rails: {
+    pluck_to_hash: false,
+    pluck_to_struct: false,
+    find_relation_each: false,
+    find_in_relation_batches: false,
   },
   string: {
     to_bool: false,
@@ -28,8 +32,6 @@ Rearmed.enabled_patches = {
     dig: false
   },
   array: {
-    index_all: false,
-    find: false,
     dig: false,
     delete_first: false
   },
@@ -48,8 +50,6 @@ Rearmed.enabled_patches = {
 
 require 'rearmed/apply_patches'
 eos
-
-      create_file "config/initializers/rearmed.rb", contents
     end
 
   end

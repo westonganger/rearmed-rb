@@ -21,15 +21,19 @@ Run `rails g rearmed:setup` to create a settings files in `config/initializers/r
 Rearmed.enabled_patches = {
   rails_4: {
     or: false,
-    link_to_confirm: false,
-    find_relation_each: false,
-    find_in_relation_batches: false,
+    link_to_confirm: false
   },
   rails_3: {
     hash_compact: false,
     pluck: false,
     update_columns: false,
-    all: false,
+    all: false
+  },
+  rails: {
+    pluck_to_hash: false,
+    pluck_to_struct: false,
+    find_relation_each: false,
+    find_in_relation_batches: false,
   },
   string: {
     to_bool: false,
@@ -127,6 +131,14 @@ hash.only!(:foo, :bar)
 
 ### Rails
 
+##### Additional ActiveRecord Methods
+```ruby
+Post.all.pluck_to_hash(:name, :category, :id)
+Post.all.pluck_to_struct(:name, :category, :id)
+Post.find_in_relation_batches # this returns a relation instead of an array
+Post.find_relation_each # this returns a relation instead of an array
+```
+
 ##### Rails 3.x Backports
 ```ruby
 my_hash.compact
@@ -137,12 +149,10 @@ Post.pluck(:name, :id) # adds multi column pluck support ex. => [['first', 1], [
 ```
 
 
-##### Rails 4.x Backports & Additional Methods
+##### Rails 4.x Backports
 ```ruby
 Post.where(name: 'foo').or.where(content: 'bar')
 = link_to 'Delete', post_path(post), method: :delete, confirm: "Are you sure you want to delete this post?" #returns rails 3 behaviour of allowing confirm attribute as well as data-confirm
-Post.find_in_relation_batches # this returns a relation instead of an array
-Post.find_relation_each # this returns a relation instead of an array
 ```
 
 # Credits

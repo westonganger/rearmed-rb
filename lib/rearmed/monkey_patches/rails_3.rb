@@ -1,7 +1,7 @@
-rails_3_enabled = Rearmed.enabled_patches[:rails_3] == true
+enabled = Rearmed.enabled_patches[:rails_3] == true
 
 if defined?(ActiveSupport) && ActiveSupport::VERSION::MAJOR < 4
-  if rails_3_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :hash_compact) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :hash_compact) == true
     Hash.class_eval do
       def compact
         self.select{|_, value| !value.nil?}
@@ -16,7 +16,7 @@ end
 
 if defined?(ActiveRecord) && ActiveRecord::VERSION::MAJOR < 4
 
-  if rails_3_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :all) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :all) == true
     ActiveRecord::FinderMethods.module_eval do
       def all(*args)
         args.any? ? apply_finder_options(args.first) : self
@@ -24,7 +24,7 @@ if defined?(ActiveRecord) && ActiveRecord::VERSION::MAJOR < 4
     end
   end
 
-  if rails_3_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :update_columns) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :update_columns) == true
     ActiveRecord::Persistence::ClassMethods.module_eval do
       def update_columns(attributes)
         raise ActiveRecordError, "cannot update a new record" if new_record?
@@ -45,7 +45,7 @@ if defined?(ActiveRecord) && ActiveRecord::VERSION::MAJOR < 4
     end
   end
 
-  if rails_3_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :pluck) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :pluck) == true
     ActiveRecord::Relation.class_eval do
       def pluck(*args)
         args.map! do |column_name|
