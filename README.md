@@ -77,7 +77,7 @@ my_var.in?(1,2,3) # or with splat arguments
 # or without monkey patch: Rearmed.valid_integer?('123')
 
 '123.123'.valid_float? 
-# or without monkey patch: Rearmed.valid_float?('123')
+# or without monkey patch: Rearmed.valid_float?('123.123')
 
 'true'.to_bool 
 # or without monkey patch: Rearmed.to_bool('true')
