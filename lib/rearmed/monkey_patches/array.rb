@@ -12,9 +12,9 @@ Array.module_eval do
       if block_given? && !no_arg_passed
         raise BothArgAndBlockError
       elsif block_given?
-        self.delete_at(self.index{|x| yield(x)})
+        self.delete_at(self.index{|x| yield(x)} || self.length)
       elsif item || !no_arg_passed
-        self.delete_at(self.index(item) || array.length)
+        self.delete_at(self.index(item) || self.length)
       else
         self.delete_at(0)
       end
