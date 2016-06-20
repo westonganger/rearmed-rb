@@ -8,7 +8,7 @@ Array.module_eval do
   end
 
   if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :delete_first) == true
-    def delete_first(item = (no_arg_passed = true; nil))
+    def delete_first(item=(no_arg_passed = true; nil))
       if block_given? && !no_arg_passed
         raise BothArgAndBlockError
       elsif block_given?
