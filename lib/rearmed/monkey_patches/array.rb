@@ -1,13 +1,13 @@
 array_enabled = Rearmed.enabled_patches[:array] == true
 
 Array.module_eval do
-  if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :not_empty) == true
+  if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :not_empty)
     def not_empty?
       !empty?
     end
   end
 
-  if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :delete_first) == true
+  if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :delete_first)
     def delete_first(item=(no_arg_passed = true; nil))
       if block_given? && !no_arg_passed
         raise BothArgAndBlockError
@@ -21,7 +21,7 @@ Array.module_eval do
     end
   end
 
-  if RUBY_VERSION.to_f < 2.3 && array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :dig) == true
+  if RUBY_VERSION.to_f < 2.3 && array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :dig)
     def dig(*args)
       Rearmed.dig(self, *args)
     end

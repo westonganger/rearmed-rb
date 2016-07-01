@@ -1,7 +1,7 @@
 hash_enabled = Rearmed.enabled_patches[:hash] == true
 
 Hash.class_eval do
-  if hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :only) == true
+  if hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :only)
     def only(*keys)
       Rearmed.only(self, *keys)
     end
@@ -15,7 +15,7 @@ Hash.class_eval do
     end
   end
 
-  if RUBY_VERSION.to_f < 2.3 && hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :dig) == true
+  if RUBY_VERSION.to_f < 2.3 && hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :dig)
     def dig(*args)
       Rearmed.dig(self, *args)
     end

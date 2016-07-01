@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+- **1.0.4 - July 1, 2016**
+  - Add ActiveRecord `find_or_create`, `reset_table`, `reset_auto_increment`, `depupe`, ``
+  - Add ``
+  - Add `starts_with?` and `ends_with?` aliases
+  - Major improvements to opt-in system
+  - Move some methods to Rearmed for use outside of monkey patching
+- **1.0.3 - June 20, 2016**
+  - Useless version update
+  - I Thought the `delete_first` method still wasn't fixed but my app was incorrect instead
+- **1.0.2 - June 20, 2016**
+  - Fix array `delete_first` method
+- **1.0.1 - June 17, 2016**
+  - Add `pluck_to_hash`
+  - Add `pluck_to_struct`
+  - Reorganize rails patches to have generic rails patches
 - **1.0.0 - June 8, 2016**
   - Ready for public use
   - Major improvements to opt-in system
