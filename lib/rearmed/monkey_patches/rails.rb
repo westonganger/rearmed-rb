@@ -4,10 +4,14 @@ if defined?(ActiveRecord)
 
   ActiveRecord::Base.class_eval do
     if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :reset_table)
-      def self.reset_table
+      def self.reset_table(opts={})
+        if opts[:delete_method] && opts[:delete_method].to_sym == :destroy
+          self.destroy_all
+        end
+
         case self.connection.adapter_name.downcase.to_sym
         when :mysql2
-          self.delete_all
+          self.delete_all unless opts[:delete_method] == :destroy
           self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = 1")
         when :postgresql
           self.connection.execute("TRUNCATE TABLE #{self.table_name} RESTART IDENTITY")

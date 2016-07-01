@@ -151,7 +151,9 @@ Post.pluck_to_struct(:name, :category, :id)
 Post.find_or_create(name: 'foo', content: 'bar') # use this instead of the super confusing first_or_create method
 Post.find_or_create!(name: 'foo', content: 'bar')
 
-Post.reset_table # destroy all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
+Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
+# or with options
+Post.reset_table(delete_method: :destroy) # use destroy_all to ensure all callbacks are fired
 
 Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column
 # or with options
