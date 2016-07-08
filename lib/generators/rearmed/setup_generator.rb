@@ -11,7 +11,6 @@ Rearmed.enabled_patches = {
     link_to_confirm: false
   },
   rails_3: {
-    hash_compact: false,
     pluck: false,
     update_columns: false,
     all: false
@@ -36,7 +35,8 @@ Rearmed.enabled_patches = {
   },
   hash: {
     only: false,
-    dig: false
+    dig: false,
+    compact: false,
   },
   array: {
     dig: false,

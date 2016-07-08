@@ -1,19 +1,5 @@
 enabled = Rearmed.enabled_patches[:rails_3] == true
 
-if defined?(ActiveSupport) && ActiveSupport::VERSION::MAJOR < 4
-  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :hash_compact)
-    Hash.class_eval do
-      def compact
-        self.select{|_, value| !value.nil?}
-      end
-
-      def compact!
-        self.reject!{|_, value| value.nil?}
-      end
-    end
-  end
-end
-
 if defined?(ActiveRecord) && ActiveRecord::VERSION::MAJOR < 4
 
   if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :all)

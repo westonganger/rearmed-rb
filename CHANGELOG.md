@@ -1,12 +1,14 @@
 CHANGELOG
 ---------
 
-- **1.0.4 - July 1, 2016**
-  - Add ActiveRecord `find_or_create`, `reset_table`, `reset_auto_increment`, `depupe`, ``
-  - Add ``
-  - Add `starts_with?` and `ends_with?` aliases
+- **1.1.0 - July 8, 2016**
+  - Add ActiveRecord `find_or_create`, `reset_table`, `reset_auto_increment`, `depupe`
+  - Add `starts_with?`, `begins_with?`, `ends_with?` aliases
   - Major improvements to opt-in system
+  - Allow Hash compact work without ActiveSupport
+  - Only allow `in?` patch without ActiveSupport
   - Move some methods to Rearmed for use outside of monkey patching
+  - Add test's for everything except for the Rails methods (Would love a PR for the Rails tests)
 - **1.0.3 - June 20, 2016**
   - Useless version update
   - I Thought the `delete_first` method still wasn't fixed but my app was incorrect instead

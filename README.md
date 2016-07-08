@@ -24,7 +24,6 @@ Rearmed.enabled_patches = {
     link_to_confirm: false
   },
   rails_3: {
-    hash_compact: false,
     pluck: false,
     update_columns: false,
     all: false
@@ -49,7 +48,8 @@ Rearmed.enabled_patches = {
   },
   hash: {
     only: false,
-    dig: false
+    dig: false,
+    compact: false
   },
   array: {
     dig: false,
@@ -74,6 +74,8 @@ require 'rearmed/apply_patches'
 ### Object
 ```ruby
 my_var.not_nil?
+
+# Only for non-Rails environments, as Rails already has this method
 my_var.in?([1,2,3])
 my_var.in?(1,2,3) # or with splat arguments
 ```
@@ -104,12 +106,8 @@ Date.now
 ```ruby
 items = ['1.1', '1.11', '1.2']
 items.natural_sort 
-items.natural_sort(reverse: true) # because natural_sort does not accept a block
+items.natural_sort(reverse: true) # because natural_sort does not accept a block, accepting PR's on this
 # or without monkey patch: Rearmed.natural_sort(items) or Rearmed.natural_sort(items, reverse: true)
-
-items = ['1.1', '1.11', '1.2']
-items.natural_sort{|a,b| b <=> a} 
-# or without monkey patch: Rearmed.natural_sort(items){|a,b| b <=> a}
 
 items = [{version: "1.1"}, {version: "1.11"}, {version: "1.2"}]
 items.natural_sort_by{|x| x[:version]} 
@@ -117,8 +115,8 @@ items.natural_sort_by{|x| x[:version]}
 
 # Only available on array and hash in Ruby 2.2.x or below
 items = [{foo: ['foo','bar']}, {test: 'thing'}]
-items.dig(1, :foo, 2) # => 'bar'
-# or without monkey patch: Rearmed.dig(items){|x| x[:version]}
+items.dig(0, :foo, 1) # => 'bar'
+# or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
 ```
 
 ### Array Methods
@@ -139,6 +137,9 @@ hash.only(:foo, :bar) # => {foo: 'foo'}
 # or without monkey patch: Rearmed.only(hash, :foo, :bar)
 
 hash.only!(:foo, :bar)
+
+my_hash.compact
+my_hash.compact!
 ```
 
 ### Rails
@@ -181,11 +182,12 @@ Post.where(name: 'foo).or(content: 'bar')
 
 ##### Rails 3.x Backports
 ```ruby
-my_hash.compact
-my_hash.compact!
 Post.all # Now returns AR relation
 Post.first.update_columns(a: 'foo', b: 'bar')
 Post.pluck(:name, :id) # adds multi column pluck support ex. => [['first', 1], ['second', 2], ['third', 3]]
+
+my_hash.compact # See Hash methods above
+my_hash.compact!
 ```
 
 # Contributing / Todo

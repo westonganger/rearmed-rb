@@ -7,7 +7,7 @@ Object.class_eval do
     end
   end
 
-  if object_enabled || Rearmed.dig(Rearmed.enabled_patches, :object, :in)
+  if !defined?(ActiveSupport) && (object_enabled || Rearmed.dig(Rearmed.enabled_patches, :object, :in))
     def in?(array, *more)
       if !more.empty?
         array = [array, *more]

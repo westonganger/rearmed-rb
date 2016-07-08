@@ -1,6 +1,17 @@
 hash_enabled = Rearmed.enabled_patches[:hash] == true
 
 Hash.class_eval do
+  allowed = defined?(ActiveSupport) ? (ActiveSupport::VERSION::MAJOR > 3) : true
+  if allowed && (hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :compact))
+    def compact
+      self.select{|_, value| !value.nil?}
+    end
+
+    def compact!
+      self.reject!{|_, value| value.nil?}
+    end
+  end
+
   if hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :only)
     def only(*keys)
       Rearmed.only(self, *keys)
