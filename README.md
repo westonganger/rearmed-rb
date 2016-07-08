@@ -158,7 +158,7 @@ Post.reset_table(delete_method: :destroy) # use destroy_all to ensure all callba
 
 Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column
 # or with options
-Post.reset_auto_increment(value: 1, column: :id)
+Post.reset_auto_increment(value: 0, column: :id) #column option is only relevant for postgresql
 
 Post.dedupe # remove all duplicate records, defaults to the models column_names list
 # or with options

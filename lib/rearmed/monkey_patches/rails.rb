@@ -6,12 +6,22 @@ if defined?(ActiveRecord)
     if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :reset_table)
       def self.reset_table(opts={})
         if opts[:delete_method] && opts[:delete_method].to_sym == :destroy
-          self.destroy_all
+          if self.try(:paranoid?)
+            self.unscoped.each do |x|
+              if x.respond_to?(:really_destroy!)
+                x.really_destroy!
+              else
+                x.destroy!
+              end
+            end
+          else
+            self.unscoped.destroy_all
+          end
         end
 
         case self.connection.adapter_name.downcase.to_sym
         when :mysql2
-          self.delete_all unless opts[:delete_method] == :destroy
+          self.unscoped.delete_all unless opts[:delete_method] == :destroy
           self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = 1")
         when :postgresql
           self.connection.execute("TRUNCATE TABLE #{self.table_name} RESTART IDENTITY")
