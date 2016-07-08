@@ -19,7 +19,6 @@ if defined?(ActiveRecord)
           self.connection.execute("DELETE FROM #{self.table_name}")
           self.connection.execute("DELETE FROM sqlite_sequence WHERE NAME='#{self.table_name}'")
         end
-        self.reset
       end
     end
 
@@ -35,7 +34,6 @@ if defined?(ActiveRecord)
         when :sqlite3
           self.connection.execute("UPDATE SQLITE_SEQUENCE SET SEQ=#{value-1} WHERE NAME='#{self.table_name}'")
         end
-        self.reset
       end
     end
 
@@ -53,7 +51,6 @@ if defined?(ActiveRecord)
           (opts[:keep] && opts[:keep] == :last) ? duplicates.pop : uplicates.shift
           duplicates.each{|x| x.destroy}
         end
-        self.reset
       end
     end
 
