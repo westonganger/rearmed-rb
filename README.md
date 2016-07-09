@@ -154,20 +154,24 @@ Post.find_or_create!(name: 'foo', content: 'bar')
 
 Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
 # or with options
-Post.reset_table(delete_method: :destroy) # use destroy_all to ensure all callbacks are fired
+Post.reset_table(delete_method: :destroy) # to ensure all callbacks are fired
 
-Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column
+Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column, if contains records then defaults to starting from next available number
 # or with options
-Post.reset_auto_increment(value: 0, column: :id) #column option is only relevant for postgresql
+Post.reset_auto_increment(value: 1, column: :id) # column option is only relevant for postgresql
 
-Post.dedupe # remove all duplicate records, defaults to the models column_names list
+Post.dedupe # remove all duplicate records, defaults to all of the models column_names except timestamps
 # or with options
-Post.dedupe(columns: [:name, :content, :category_id])
-Post.dedupe(skip_timestamps: true)
+Post.dedupe(delete_method: :destroy) # to ensure all callbacks are fired
+Post.dedupe(columns: [:name, :content, :category_id]
+Post.dedupe(skip_timestamps: false) # skip timestamps defaults to true (created_at, updated_at, deleted_at)
+Post.dedupe(keep: :last) # Keep the last duplicate instead of the first duplicate by default
 
 Post.find_in_relation_batches # this returns a relation instead of an array
 Post.find_relation_each # this returns a relation instead of an array
 ```
+
+Note: All methods which involve deletion are compatible with Paranoia & ActsAsParanoid
 
 ##### Rails 4.x Backports
 ```ruby

@@ -21,7 +21,7 @@ if defined?(ActiveRecord)
 
         case self.connection.adapter_name.downcase.to_sym
         when :mysql2
-          if !opts[:delete_method] || opts[:delete_method].to_sym == :destroy
+          if !opts[:delete_method] || opts[:delete_method].to_sym != :destroy
             if defined?(ActsAsParanoid) && self.try(:paranoid?)
               self.unscoped.delete_all!
             else
@@ -60,12 +60,12 @@ if defined?(ActiveRecord)
           opts[:columns] = self.column_names.reject{|x| x == 'id'}
         end
         
-        if opts[:skip_timestamps]
+        if opts[:skip_timestamps] != false
           opts[:columns].reject!{|x| ['created_at','updated_at','deleted_at'].include?(x)}
         end
 
         self.all.group_by{|model| opts[:columns].map{|x| model[x]}}.values.each do |duplicates|
-          (opts[:keep] && opts[:keep].to_sym == :last) ? duplicates.pop : uplicates.shift
+          (opts[:keep] && opts[:keep].to_sym == :last) ? duplicates.pop : duplicates.shift
           if opts[:delete_method] && opts[:delete_method].to_sym == :destroy
             duplicates.each do |x|
               if x.respond_to?(:really_destroy!)
@@ -76,9 +76,9 @@ if defined?(ActiveRecord)
             end
           else
             if defined?(ActsAsParanoid) && self.try(:paranoid?)
-              duplicates.delete_all!
+              self.unscoped.where(id: duplicates.collect(&:id)).delete_all!
             else
-              duplicates.delete_all
+              self.unscoped.where(id: duplicates.collect(&:id)).delete_all
             end
           end
         end
