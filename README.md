@@ -199,7 +199,7 @@ If you want to request a method please raise an issue and we can discuss the imp
 
 If you want to contribute here are a couple of things you could do:
 
-- Add Tests (preferably minitest)
+- Add Tests for Rails methods
 - Get the `natural_sort` method to accept a block
 
 
