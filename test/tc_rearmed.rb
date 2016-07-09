@@ -14,10 +14,6 @@ class TestRearmed < MiniTest::Test
   def setup
     Minitest::Assertions.module_eval do
       alias_method :eql, :assert_equal
-
-      def assert_nothing_raised(*)
-        yield
-      end
     end
 
     Rearmed.enabled_patches = {
@@ -76,9 +72,7 @@ class TestRearmed < MiniTest::Test
   end
 
   def test_date
-    assert_nothing_raised do
-      Date.now
-    end
+    Date.now
   end
 
   def test_enumerable
