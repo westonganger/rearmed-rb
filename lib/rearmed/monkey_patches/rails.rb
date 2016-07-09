@@ -2,8 +2,108 @@ enabled = Rearmed.enabled_patches[:rails] == true
 
 if defined?(ActiveRecord)
 
-  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :pluck_to_hash) == true
-    ActiveRecord::Base.class_eval do
+  ActiveRecord::Base.class_eval do
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :reset_table)
+      def self.reset_table(opts={})
+        if opts[:delete_method] && opts[:delete_method].to_sym == :destroy
+          if self.try(:paranoid?)
+            self.unscoped.each do |x|
+              if x.respond_to?(:really_destroy!)
+                x.really_destroy!
+              else
+                x.destroy!
+              end
+            end
+          else
+            self.unscoped.destroy_all
+          end
+        end
+
+        case self.connection.adapter_name.downcase.to_sym
+        when :mysql2
+          if !opts[:delete_method] || opts[:delete_method].to_sym != :destroy
+            if defined?(ActsAsParanoid) && self.try(:paranoid?)
+              self.unscoped.delete_all!
+            else
+              self.unscoped.delete_all
+            end
+          end
+          self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = 1")
+        when :postgresql
+          self.connection.execute("TRUNCATE TABLE #{self.table_name} RESTART IDENTITY")
+        when :sqlite3
+          self.connection.execute("DELETE FROM #{self.table_name}")
+          self.connection.execute("DELETE FROM sqlite_sequence WHERE NAME='#{self.table_name}'")
+        end
+      end
+    end
+
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :reset_auto_increment)
+      def self.reset_auto_increment(opts={})
+        case self.connection.adapter_name.downcase.to_sym
+        when :mysql2
+          opts[:value] = 1 if opts[:value].blank?
+          self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = #{opts[:value]}")
+        when :postgresql
+          opts[:value] = 1 if opts[:value].blank?
+          self.connection.execute("ALTER SEQUENCE #{self.table_name}_#{opts[:column].to_s || 'id'}_seq RESTART WITH #{opts[:value]}")
+        when :sqlite3
+          opts[:value] = 0 if opts[:value].blank?
+          self.connection.execute("UPDATE SQLITE_SEQUENCE SET SEQ=#{opts[:value]} WHERE NAME='#{self.table_name}'")
+        end
+      end
+    end
+
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :dedupe)
+      def self.dedupe(opts={})
+        if !opts[:columns]
+          opts[:columns] = self.column_names.reject{|x| x == 'id'}
+        end
+        
+        if opts[:skip_timestamps] != false
+          opts[:columns].reject!{|x| ['created_at','updated_at','deleted_at'].include?(x)}
+        end
+
+        self.all.group_by{|model| opts[:columns].map{|x| model[x]}}.values.each do |duplicates|
+          (opts[:keep] && opts[:keep].to_sym == :last) ? duplicates.pop : duplicates.shift
+          if opts[:delete_method] && opts[:delete_method].to_sym == :destroy
+            duplicates.each do |x|
+              if x.respond_to?(:really_destroy!)
+                x.really_destroy!
+              else
+                x.destroy!
+              end
+            end
+          else
+            if defined?(ActsAsParanoid) && self.try(:paranoid?)
+              self.unscoped.where(id: duplicates.collect(&:id)).delete_all!
+            else
+              self.unscoped.where(id: duplicates.collect(&:id)).delete_all
+            end
+          end
+        end
+      end
+    end
+
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :find_or_create)
+      def self.find_or_create(attrs={}, save_opts={})
+        unless self.where(attrs).limit(1).first
+          x = self.class.new(attrs)
+          x.save(save_opts)
+          return t
+        end
+      end
+
+      def self.find_or_create!(attrs={}, save_opts={})
+        unless self.where(attrs).limit(1).first
+          x = self.class.new(attrs)
+          x.save!(save_opts)
+          return t
+        end
+      end
+    end
+
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :pluck_to_hash)
       def self.pluck_to_hash(*keys)
         hash_type = keys[-1].is_a?(Hash) ? keys.pop.fetch(:hash_type, HashWithIndifferentAccess) : HashWithIndifferentAccess
         block_given = block_given?
@@ -15,7 +115,9 @@ if defined?(ActiveRecord)
           block_given ? yield(value) : value
         end
       end
+    end
 
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :pluck_to_struct)
       def self.pluck_to_struct(*keys)
         struct_type = keys[-1].is_a?(Hash) ? keys.pop.fetch(:struct_type, Struct) : Struct
         block_given = block_given?
@@ -28,9 +130,11 @@ if defined?(ActiveRecord)
           block_given ? yield(value) : value
         end
       end
+    end
 
-      private
+    private
 
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :pluck_to_hash) || Rearmed.dig(Rearmed.enabled_patches, :rails, :pluck_to_struct)
       def self.format_keys(keys)
         if keys.blank?
           [column_names, column_names]
@@ -52,7 +156,7 @@ if defined?(ActiveRecord)
   end
 
   ActiveRecord::Batches.module_eval do
-    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :find_in_relation_batches) == true
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :find_in_relation_batches)
       def find_in_relation_batches(options = {})
         options.assert_valid_keys(:start, :batch_size)
 
@@ -89,7 +193,7 @@ if defined?(ActiveRecord)
       end
     end
 
-    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :find_relation_each) == true
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :find_relation_each)
       def find_relation_each(options = {})
         if block_given?
           find_in_relation_batches(options) do |records|

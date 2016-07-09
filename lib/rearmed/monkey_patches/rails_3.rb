@@ -1,22 +1,8 @@
 enabled = Rearmed.enabled_patches[:rails_3] == true
 
-if defined?(ActiveSupport) && ActiveSupport::VERSION::MAJOR < 4
-  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :hash_compact) == true
-    Hash.class_eval do
-      def compact
-        self.select{|_, value| !value.nil?}
-      end
-
-      def compact!
-        self.reject!{|_, value| value.nil?}
-      end
-    end
-  end
-end
-
 if defined?(ActiveRecord) && ActiveRecord::VERSION::MAJOR < 4
 
-  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :all) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :all)
     ActiveRecord::FinderMethods.module_eval do
       def all(*args)
         args.any? ? apply_finder_options(args.first) : self
@@ -24,7 +10,7 @@ if defined?(ActiveRecord) && ActiveRecord::VERSION::MAJOR < 4
     end
   end
 
-  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :update_columns) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :update_columns)
     ActiveRecord::Persistence::ClassMethods.module_eval do
       def update_columns(attributes)
         raise ActiveRecordError, "cannot update a new record" if new_record?
@@ -45,7 +31,7 @@ if defined?(ActiveRecord) && ActiveRecord::VERSION::MAJOR < 4
     end
   end
 
-  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :pluck) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_3, :pluck)
     ActiveRecord::Relation.class_eval do
       def pluck(*args)
         args.map! do |column_name|

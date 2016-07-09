@@ -24,7 +24,6 @@ Rearmed.enabled_patches = {
     link_to_confirm: false
   },
   rails_3: {
-    hash_compact: false,
     pluck: false,
     update_columns: false,
     all: false
@@ -32,17 +31,25 @@ Rearmed.enabled_patches = {
   rails: {
     pluck_to_hash: false,
     pluck_to_struct: false,
+    find_or_create: false,
+    reset_table: false,
+    reset_auto_increment: false,
+    dedupe: false,
     find_relation_each: false,
     find_in_relation_batches: false,
   },
   string: {
-    to_bool: false,
     valid_integer: false,
-    valid_float: false
+    valid_float: false,
+    to_bool: false,
+    starts_with: false,
+    begins_with: false,
+    ends_with: false
   },
   hash: {
     only: false,
-    dig: false
+    dig: false,
+    compact: false
   },
   array: {
     dig: false,
@@ -67,6 +74,8 @@ require 'rearmed/apply_patches'
 ### Object
 ```ruby
 my_var.not_nil?
+
+# Only for non-Rails environments, as Rails already has this method
 my_var.in?([1,2,3])
 my_var.in?(1,2,3) # or with splat arguments
 ```
@@ -81,6 +90,11 @@ my_var.in?(1,2,3) # or with splat arguments
 
 'true'.to_bool 
 # or without monkey patch: Rearmed.to_bool('true')
+
+# alias of start_with? and end_with? to have more sensible method names
+'foo'.starts_with?('fo') # => true
+'foo'.begins_with?('fo') # => true
+'bar'.ends_with?('ar') # => true
 ```
 
 ### Date
@@ -92,12 +106,8 @@ Date.now
 ```ruby
 items = ['1.1', '1.11', '1.2']
 items.natural_sort 
-items.natural_sort(reverse: true) # because natural_sort does not accept a block
+items.natural_sort(reverse: true) # because natural_sort does not accept a block, accepting PR's on this
 # or without monkey patch: Rearmed.natural_sort(items) or Rearmed.natural_sort(items, reverse: true)
-
-items = ['1.1', '1.11', '1.2']
-items.natural_sort{|a,b| b <=> a} 
-# or without monkey patch: Rearmed.natural_sort(items){|a,b| b <=> a}
 
 items = [{version: "1.1"}, {version: "1.11"}, {version: "1.2"}]
 items.natural_sort_by{|x| x[:version]} 
@@ -105,8 +115,8 @@ items.natural_sort_by{|x| x[:version]}
 
 # Only available on array and hash in Ruby 2.2.x or below
 items = [{foo: ['foo','bar']}, {test: 'thing'}]
-items.dig(1, :foo, 2) # => 'bar'
-# or without monkey patch: Rearmed.dig(items){|x| x[:version]}
+items.dig(0, :foo, 1) # => 'bar'
+# or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
 ```
 
 ### Array Methods
@@ -127,33 +137,71 @@ hash.only(:foo, :bar) # => {foo: 'foo'}
 # or without monkey patch: Rearmed.only(hash, :foo, :bar)
 
 hash.only!(:foo, :bar)
+
+my_hash.compact
+my_hash.compact!
 ```
 
 ### Rails
 
 ##### Additional ActiveRecord Methods
+Note: All methods which involve deletion are compatible with Paranoia & ActsAsParanoid
+
 ```ruby
-Post.all.pluck_to_hash(:name, :category, :id)
-Post.all.pluck_to_struct(:name, :category, :id)
+Post.pluck_to_hash(:name, :category, :id)
+Post.pluck_to_struct(:name, :category, :id)
+
+Post.find_or_create(name: 'foo', content: 'bar') # use this instead of the super confusing first_or_create method
+Post.find_or_create!(name: 'foo', content: 'bar')
+
+Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
+# or with options
+Post.reset_table(delete_method: :destroy) # to ensure all callbacks are fired
+
+Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column, if contains records then defaults to starting from next available number
+# or with options
+Post.reset_auto_increment(value: 1, column: :id) # column option is only relevant for postgresql
+
+Post.dedupe # remove all duplicate records, defaults to all of the models column_names except timestamps
+# or with options
+Post.dedupe(delete_method: :destroy) # to ensure all callbacks are fired
+Post.dedupe(columns: [:name, :content, :category_id]
+Post.dedupe(skip_timestamps: false) # skip timestamps defaults to true (created_at, updated_at, deleted_at)
+Post.dedupe(keep: :last) # Keep the last duplicate instead of the first duplicate by default
+
 Post.find_in_relation_batches # this returns a relation instead of an array
 Post.find_relation_each # this returns a relation instead of an array
 ```
 
-##### Rails 3.x Backports
-```ruby
-my_hash.compact
-my_hash.compact!
-Post.all # Now returns AR relation
-Post.first.update_columns(a: 'foo', b: 'bar')
-Post.pluck(:name, :id) # adds multi column pluck support ex. => [['first', 1], ['second', 2], ['third', 3]]
-```
-
-
 ##### Rails 4.x Backports
 ```ruby
 Post.where(name: 'foo').or.where(content: 'bar')
-= link_to 'Delete', post_path(post), method: :delete, confirm: "Are you sure you want to delete this post?" #returns rails 3 behaviour of allowing confirm attribute as well as data-confirm
+Post.where(name: 'foo').or.my_custom_scope
+Post.where(name: 'foo').or(Post.where(content: 'bar'))
+Post.where(name: 'foo).or(content: 'bar')
+
+= link_to 'Delete', post_path(post), method: :delete, confirm: "Are you sure you want to delete this post?" 
+# returns to rails 3 behaviour of allowing confirm attribute as well as data-confirm
 ```
+
+##### Rails 3.x Backports
+```ruby
+Post.all # Now returns AR relation
+Post.first.update_columns(a: 'foo', b: 'bar')
+Post.pluck(:name, :id) # adds multi column pluck support ex. => [['first', 1], ['second', 2], ['third', 3]]
+
+my_hash.compact # See Hash methods above
+my_hash.compact!
+```
+
+# Contributing / Todo
+If you want to request a method please raise an issue and we can discuss the implementation. 
+
+If you want to contribute here are a couple of things you could do:
+
+- Add Tests for Rails methods
+- Get the `natural_sort` method to accept a block
+
 
 # Credits
 Created by Weston Ganger - @westonganger

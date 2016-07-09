@@ -1,6 +1,6 @@
 enabled = Rearmed.enabled_patches[:rails_4] == true
 
-if defined?(ActionView) && enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :link_to_confirm) == true
+if defined?(ActionView) && enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :link_to_confirm)
   ActionView::Helpers::UrlHelper.module_eval do
     def convert_options_to_data_attributes(options, html_options)
       if html_options
@@ -25,7 +25,7 @@ end
 if defined?(ActiveRecord)
 
   ActiveRecord::Batches.module_eval do
-    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :find_in_relation_batches) == true
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :find_in_relation_batches)
       def find_in_relation_batches(options = {})
         options.assert_valid_keys(:start, :batch_size)
 
@@ -62,7 +62,7 @@ if defined?(ActiveRecord)
       end
     end
 
-    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :find_relation_each) == true
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :find_relation_each)
       def find_relation_each(options = {})
         if block_given?
           find_in_relation_batches(options) do |records|
@@ -78,7 +78,7 @@ if defined?(ActiveRecord)
   end
 
 
-  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :or) == true
+  if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails_4, :or)
     module ActiveRecord
       module Querying
         delegate :or, :to => :all
