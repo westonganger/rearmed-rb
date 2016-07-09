@@ -145,6 +145,8 @@ my_hash.compact!
 ### Rails
 
 ##### Additional ActiveRecord Methods
+Note: All methods which involve deletion are compatible with Paranoia & ActsAsParanoid
+
 ```ruby
 Post.pluck_to_hash(:name, :category, :id)
 Post.pluck_to_struct(:name, :category, :id)
@@ -170,8 +172,6 @@ Post.dedupe(keep: :last) # Keep the last duplicate instead of the first duplicat
 Post.find_in_relation_batches # this returns a relation instead of an array
 Post.find_relation_each # this returns a relation instead of an array
 ```
-
-Note: All methods which involve deletion are compatible with Paranoia & ActsAsParanoid
 
 ##### Rails 4.x Backports
 ```ruby
