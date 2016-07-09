@@ -21,7 +21,13 @@ if defined?(ActiveRecord)
 
         case self.connection.adapter_name.downcase.to_sym
         when :mysql2
-          self.unscoped.delete_all unless opts[:delete_method] == :destroy
+          if !opts[:delete_method] || opts[:delete_method].to_sym == :destroy
+            if defined?(ActsAsParanoid) && self.try(:paranoid?)
+              self.unscoped.delete_all!
+            else
+              self.unscoped.delete_all
+            end
+          end
           self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = 1")
         when :postgresql
           self.connection.execute("TRUNCATE TABLE #{self.table_name} RESTART IDENTITY")
@@ -34,15 +40,16 @@ if defined?(ActiveRecord)
 
     if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :reset_auto_increment)
       def self.reset_auto_increment(opts={})
-        value = (opts[:value] || 1)
-
         case self.connection.adapter_name.downcase.to_sym
         when :mysql2
-          self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = #{value}")
+          opts[:value] = 1 if opts[:value].blank?
+          self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = #{opts[:value]}")
         when :postgresql
-          self.connection.execute("ALTER SEQUENCE #{self.table_name}_#{(opts[:column] || :id).to_s}_seq RESTART WITH #{value}")
+          opts[:value] = 1 if opts[:value].blank?
+          self.connection.execute("ALTER SEQUENCE #{self.table_name}_#{opts[:column].to_s || 'id'}_seq RESTART WITH #{opts[:value]}")
         when :sqlite3
-          self.connection.execute("UPDATE SQLITE_SEQUENCE SET SEQ=#{value-1} WHERE NAME='#{self.table_name}'")
+          opts[:value] = 0 if opts[:value].blank?
+          self.connection.execute("UPDATE SQLITE_SEQUENCE SET SEQ=#{opts[:value]} WHERE NAME='#{self.table_name}'")
         end
       end
     end
@@ -50,16 +57,30 @@ if defined?(ActiveRecord)
     if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :dedupe)
       def self.dedupe(opts={})
         if !opts[:columns]
-          opts[:columns] = self.column_names.except!(:id)
+          opts[:columns] = self.column_names.reject{|x| x == 'id'}
         end
         
         if opts[:skip_timestamps]
-          opts[:columns].except!(:created_at, :updated_at, :deleted_at)
+          opts[:columns].reject!{|x| ['created_at','updated_at','deleted_at'].include?(x)}
         end
 
         self.all.group_by{|model| opts[:columns].map{|x| model[x]}}.values.each do |duplicates|
-          (opts[:keep] && opts[:keep] == :last) ? duplicates.pop : uplicates.shift
-          duplicates.each{|x| x.destroy}
+          (opts[:keep] && opts[:keep].to_sym == :last) ? duplicates.pop : uplicates.shift
+          if opts[:delete_method] && opts[:delete_method].to_sym == :destroy
+            duplicates.each do |x|
+              if x.respond_to?(:really_destroy!)
+                x.really_destroy!
+              else
+                x.destroy!
+              end
+            end
+          else
+            if defined?(ActsAsParanoid) && self.try(:paranoid?)
+              duplicates.delete_all!
+            else
+              duplicates.delete_all
+            end
+          end
         end
       end
     end
