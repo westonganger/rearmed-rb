@@ -121,8 +121,10 @@ class TestRearmed < MiniTest::Test
     array = [1,3,2,1,3,4,1]
     array.delete_first{|x| x != 1}
     eql(array, [1,2,1,3,4,1])
-  end
 
+    eql(array.not_empty?, true)
+  end
+  
   def test_hash
     hash = {foo: 'foo', bar: 'bar', other: 'other'}
     eql(hash.only(:foo, :bar), {foo: 'foo', bar: 'bar'})

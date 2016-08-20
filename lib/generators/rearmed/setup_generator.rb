@@ -40,7 +40,8 @@ Rearmed.enabled_patches = {
   },
   array: {
     dig: false,
-    delete_first: false
+    delete_first: false,
+    not_empty: false
   },
   enumerable: {
     natural_sort: false,

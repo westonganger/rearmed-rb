@@ -53,7 +53,8 @@ Rearmed.enabled_patches = {
   },
   array: {
     dig: false,
-    delete_first: false
+    delete_first: false,
+    not_empty: false
   },
   enumerable: {
     natural_sort: false,
@@ -128,6 +129,8 @@ array.delete_first{|x| 1 == x} # => 1
 puts array # => [2,4,1]
 array.delete_first # => 2
 puts array # => [4,1]
+
+array.not_empty? # => true
 ```
 
 ### Hash Methods
