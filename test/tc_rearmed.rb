@@ -25,7 +25,8 @@ class TestRearmed < MiniTest::Test
       enumerable: true,
       rails_3: true,
       rails_4: true,
-      rails: true
+      rails: true,
+      minitest: true
     }
     require 'rearmed/apply_patches'
   end
@@ -174,26 +175,59 @@ class TestRearmed < MiniTest::Test
     eql(str.in?('a real string'), false)
   end
 
+  def test_minitest
+    #str = 'first'
+    #assert_changed "str" do
+    #  str = 'second'
+    #end
+
+    str = 'first'
+    assert_changed ->{ str } do
+      str = 'second'
+    end
+
+    name = 'first'
+    assert_changed lambda{ name } do
+      name = 'second'
+    end
+
+    #name = 'first'
+    #assert_not_changed 'name' do
+    #  name = 'first'
+    #end
+
+    name = 'first'
+    assert_not_changed ->{ name } do
+      name = 'first'
+    end
+
+    name = 'first'
+    assert_not_changed lambda{ name } do
+      name = 'first'
+    end
+  end
+
   def test_general_rails
     # THE MOST IMPORTANT TESTS HERE WOULD BE dedupe, reset_auto_increment, reset_table
     
-    #Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
-    # or with options
-    #Post.reset_table(delete_method: :destroy) # use destroy_all to ensure all callbacks are fired
-
-    #Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column
-    # or with options
-    #Post.reset_auto_increment(value: 1, column: :id)
-
-    #Post.dedupe # remove all duplicate records, defaults to the models column_names list
-    # or with options
-    #Post.dedupe(columns: [:name, :content, :category_id])
-    #Post.dedupe(skip_timestamps: true)
     #Post.pluck_to_hash(:name, :category, :id)
     #Post.pluck_to_struct(:name, :category, :id)
 
     #Post.find_or_create(name: 'foo', content: 'bar') # use this instead of the super confusing first_or_create method
     #Post.find_or_create!(name: 'foo', content: 'bar')
+
+    #Post.find_duplicates # return active record relation of all records that have duplicates
+    #Post.find_duplicates(:name) # find duplicates based on the name attribute
+    #Post.find_duplicates([:name, :category]) # find duplicates based on the name & category attribute
+    #Post.find_duplicates(name: 'A Specific Name')
+
+    #Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
+    ## or with options
+    #Post.reset_table(delete_method: :destroy) # to ensure all callbacks are fired
+
+    #Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column, if contains records then defaults to starting from next available number
+    ## or with options
+    #Post.reset_auto_increment(value: 1, column: :id) # column option is only relevant for postgresql
 
     #Post.find_in_relation_batches # this returns a relation instead of an array
     #Post.find_relation_each # this returns a relation instead of an array

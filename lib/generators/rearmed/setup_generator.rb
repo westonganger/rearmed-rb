@@ -53,6 +53,10 @@ Rearmed.enabled_patches = {
   },
   date: {
     now: false
+  },
+  minitest: {
+    assert_changed: false,
+    assert_not_changed: false
   }
 }
 

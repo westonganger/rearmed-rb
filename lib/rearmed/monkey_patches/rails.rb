@@ -46,7 +46,7 @@ if defined?(ActiveRecord)
           self.connection.execute("ALTER TABLE #{self.table_name} AUTO_INCREMENT = #{opts[:value]}")
         when :postgresql
           opts[:value] = 1 if opts[:value].blank?
-          self.connection.execute("ALTER SEQUENCE #{self.table_name}_#{opts[:column].to_s || 'id'}_seq RESTART WITH #{opts[:value]}")
+          self.connection.execute("ALTER SEQUENCE #{self.table_name}_#{opts[:column].to_s || self.primary_key}_seq RESTART WITH #{opts[:value]}")
         when :sqlite3
           opts[:value] = 0 if opts[:value].blank?
           self.connection.execute("UPDATE SQLITE_SEQUENCE SET SEQ=#{opts[:value]} WHERE NAME='#{self.table_name}'")
@@ -54,33 +54,62 @@ if defined?(ActiveRecord)
       end
     end
 
-    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :dedupe)
-      def self.dedupe(opts={})
-        if !opts[:columns]
-          opts[:columns] = self.column_names.reject{|x| x == 'id'}
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :find_duplicates)
+      def self.find_duplicates(*args)
+        options = {}
+
+        unless args.empty?
+          if args.last.is_a?(Hash)
+            options = args.pop
+          end
+
+          unless args.empty?
+            if args.count == 1 && args.first.is_a?(Array)
+              args = args.first
+            end
+
+            options[:columns] = args
+          end
         end
         
-        if opts[:skip_timestamps] != false
-          opts[:columns].reject!{|x| ['created_at','updated_at','deleted_at'].include?(x)}
+        options[:columns] ||= self.column_names.reject{|x| [self.primary_key, :created_at, :updated_at, :deleted_at].include?(x)}
+
+        if options[:delete]
+          if options[:delete] == true
+            options[:delete] = {keep: :first, delete_method: :destroy, soft_delete: true}
+          else
+            options[:delete][:delete_method] ||= :destroy
+            options[:delete][:keep] ||= :first
+            if options[:delete][:soft_delete] != false
+              options[:delete][:soft_delete] = true
+            end
+          end
+          
         end
 
-        self.all.group_by{|model| opts[:columns].map{|x| model[x]}}.values.each do |duplicates|
-          (opts[:keep] && opts[:keep].to_sym == :last) ? duplicates.pop : duplicates.shift
-          if opts[:delete_method] && opts[:delete_method].to_sym == :destroy
+        ids = self.select("#{options[:keep].to_sym == :last ? 'MAX' : 'MIN'}(#{self.primary_key}) as #{self.primary_key}").group(options[:columns]).pluck(self.primary_key)
+
+        if options[:delete]
+          duplicates = self.where.not(self.primary_key => ids)
+
+          if options[:delete][:delete_method].to_sym == :delete
+            if x.respond_to?(:delete_all!)
+              duplicates.delete_all!
+            else
+              duplicates.delete_all
+            end
+          else
             duplicates.each do |x|
-              if x.respond_to?(:really_destroy!)
+              if !options[:soft_delete] && x.respond_to?(:really_destroy!)
                 x.really_destroy!
               else
                 x.destroy!
               end
             end
-          else
-            if defined?(ActsAsParanoid) && self.try(:paranoid?)
-              self.unscoped.where(id: duplicates.collect(&:id)).delete_all!
-            else
-              self.unscoped.where(id: duplicates.collect(&:id)).delete_all
-            end
           end
+          return nil
+        else
+          return self.where.not(self.primary_key => ids)
         end
       end
     end

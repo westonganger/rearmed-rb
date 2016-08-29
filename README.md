@@ -32,9 +32,9 @@ Rearmed.enabled_patches = {
     pluck_to_hash: false,
     pluck_to_struct: false,
     find_or_create: false,
+    find_duplicates: false,
     reset_table: false,
     reset_auto_increment: false,
-    dedupe: false,
     find_relation_each: false,
     find_in_relation_batches: false,
   },
@@ -66,6 +66,10 @@ Rearmed.enabled_patches = {
   },
   date: {
     now: false
+  },
+  minitest: {
+    assert_changed: false,
+    assert_not_changed: false
   }
 }
 
@@ -157,6 +161,15 @@ Post.pluck_to_struct(:name, :category, :id)
 Post.find_or_create(name: 'foo', content: 'bar') # use this instead of the super confusing first_or_create method
 Post.find_or_create!(name: 'foo', content: 'bar')
 
+Post.find_duplicates # return active record relation of all records that have duplicates. By default it skips the primary_key, created_at, updated_at, & deleted_at columns
+Post.find_duplicates(:name) # find duplicates based on the name attribute
+Post.find_duplicates(:name, :category) # find duplicates based on the name & category attribute
+Post.find_duplicates(self.column_names.reject{|x| ['id','created_at','updated_at','deleted_at'].include?(x)})
+
+# It also can delete duplicates. Valid values for keep are :first & :last. Valid values for delete_method are :destroy & :delete. soft_delete is only used if you are using acts_as_paranoid on your model.
+Post.find_duplicates(:name, :category, delete: true)
+Post.find_duplicates(:name, :category, delete: {keep: :first, delete_method: :destroy, soft_delete: true}) # these are the default settings for delete: true
+
 Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
 # or with options
 Post.reset_table(delete_method: :destroy) # to ensure all callbacks are fired
@@ -164,13 +177,6 @@ Post.reset_table(delete_method: :destroy) # to ensure all callbacks are fired
 Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column, if contains records then defaults to starting from next available number
 # or with options
 Post.reset_auto_increment(value: 1, column: :id) # column option is only relevant for postgresql
-
-Post.dedupe # remove all duplicate records, defaults to all of the models column_names except timestamps
-# or with options
-Post.dedupe(delete_method: :destroy) # to ensure all callbacks are fired
-Post.dedupe(columns: [:name, :content, :category_id]
-Post.dedupe(skip_timestamps: false) # skip timestamps defaults to true (created_at, updated_at, deleted_at)
-Post.dedupe(keep: :last) # Keep the last duplicate instead of the first duplicate by default
 
 Post.find_in_relation_batches # this returns a relation instead of an array
 Post.find_relation_each # this returns a relation instead of an array
@@ -197,6 +203,17 @@ my_hash.compact # See Hash methods above
 my_hash.compact!
 ```
 
+### Minitest Method
+```ruby
+assert_changed -> { user.name } do
+  user.update(user_params)
+end
+
+assert_not_changed lambda{ user.name } do
+  user.update(user_params)
+end
+```
+
 # Contributing / Todo
 If you want to request a method please raise an issue and we can discuss the implementation. 
 
@@ -204,6 +221,7 @@ If you want to contribute here are a couple of things you could do:
 
 - Add Tests for Rails methods
 - Get the `natural_sort` method to accept a block
+- Get the `assert_changed` and `assert_not_changed` method to accept a String with the variable name similar to Rails `assert_difference`
 
 
 # Credits
