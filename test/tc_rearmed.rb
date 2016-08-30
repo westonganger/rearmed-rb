@@ -176,10 +176,10 @@ class TestRearmed < MiniTest::Test
   end
 
   def test_minitest
-    #str = 'first'
-    #assert_changed "str" do
-    #  str = 'second'
-    #end
+    str = 'first'
+    assert_changed "str" do
+      str = 'second'
+    end
 
     str = 'first'
     assert_changed ->{ str } do
@@ -191,10 +191,10 @@ class TestRearmed < MiniTest::Test
       name = 'second'
     end
 
-    #name = 'first'
-    #assert_not_changed 'name' do
-    #  name = 'first'
-    #end
+    name = 'first'
+    assert_not_changed 'name' do
+      name = 'first'
+    end
 
     name = 'first'
     assert_not_changed ->{ name } do

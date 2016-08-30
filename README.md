@@ -205,7 +205,11 @@ my_hash.compact!
 
 ### Minitest Method
 ```ruby
-assert_changed -> { user.name } do
+assert_changed 'user.name' do
+  user.name = "Bob"
+end
+
+assert_not_changed -> { user.name } do
   user.update(user_params)
 end
 
@@ -221,7 +225,7 @@ If you want to contribute here are a couple of things you could do:
 
 - Add Tests for Rails methods
 - Get the `natural_sort` method to accept a block
-- Get the `assert_changed` and `assert_not_changed` method to accept a String with the variable name similar to Rails `assert_difference`
+- Get the `assert_changed` and `assert_not_changed` method to accept a String with the variable name similar to Rails ``
 
 
 # Credits

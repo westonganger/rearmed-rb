@@ -6,24 +6,27 @@ if defined?(Minitest::Assertions)
 
     if enabled || Rearmed.dig(Rearmed.enabled_patches, :minitest, :assert_changed)
       def assert_changed(expression, &block)
-        #unless expression.respond_to?(:call)
-        #  expression = lambda{ eval(expression, block.binding) }
-        #  expression = lambda{ block.binding.eval("#{expression}") }
-        #end
-        old = expression.call
+        if expression.respond_to?(:call)
+          e = expression
+        else
+          e = lambda{ block.binding.eval(expression) }
+        end
+        old = e.call
         block.call
-        refute_equal old, expression.call
+        refute_equal old, e.call
       end
     end
 
     if enabled || Rearmed.dig(Rearmed.enabled_patches, :minitest, :assert_not_changed)
       def assert_not_changed(expression, &block)
-        unless expression.respond_to?(:call)
-          expression = lambda{ eval(expression, block.binding) }
+        if expression.respond_to?(:call)
+          e = expression
+        else
+          e = lambda{ block.binding.eval(expression) }
         end
-        old = expression.call
+        old = e.call
         block.call
-        assert_equal old, expression.call
+        assert_equal old, e.call
       end
     end
 
