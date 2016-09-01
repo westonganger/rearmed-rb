@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.email       = 'westonganger@gmail.com'
   s.homepage 	= 'https://github.com/westonganger/rearmed-rb'
   
-  s.summary     = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, & Rails"
-  s.description = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, & Rails"
+  s.summary     = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails"
+  s.description = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails"
   s.files = Dir.glob("{lib/**/*}") + %w{ LICENSE README.md Rakefile CHANGELOG.md }
   s.test_files  = Dir.glob("{test/**/*}")
 

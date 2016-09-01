@@ -3,6 +3,20 @@ enabled = Rearmed.enabled_patches[:rails] == true
 if defined?(ActiveRecord)
 
   ActiveRecord::Base.class_eval do
+    if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :newest)
+      def self.newest(*columns)
+        if columns.empty? || !columns.to_s.include?('created_at')
+          columns << 'created_at'
+        end
+
+        the_order = {}
+        columns.each do |x|
+          order[x.to_s] = :desc
+        end
+        self.order(the_order).limit(1).first
+      end
+    end
+
     if enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :reset_table)
       def self.reset_table(opts={})
         if opts[:delete_method] && opts[:delete_method].to_sym == :destroy

@@ -1,7 +1,7 @@
 # Rearmed Ruby
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
-A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, & Rails
+A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails
 
 The difference between this library and others is that all monkey patching is performed in an opt-in way because you shouldnt be using methods you dont know about anyways. 
 
@@ -33,6 +33,7 @@ Rearmed.enabled_patches = {
     pluck_to_struct: false,
     find_or_create: false,
     find_duplicates: false,
+    newest: false,
     reset_table: false,
     reset_auto_increment: false,
     find_relation_each: false,
@@ -169,6 +170,10 @@ Post.find_duplicates(self.column_names.reject{|x| ['id','created_at','updated_at
 # It also can delete duplicates. Valid values for keep are :first & :last. Valid values for delete_method are :destroy & :delete. soft_delete is only used if you are using acts_as_paranoid on your model.
 Post.find_duplicates(:name, :category, delete: true)
 Post.find_duplicates(:name, :category, delete: {keep: :first, delete_method: :destroy, soft_delete: true}) # these are the default settings for delete: true
+
+Post.newest # get the newest post, by default ordered by :created_at
+Post.newest(:updated_at) # different sort order
+Post.newest(:published_at, :created_at) # multiple columns to sort on
 
 Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
 # or with options

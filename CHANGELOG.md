@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+- 
+- **1.2.0 - August 31, 2016**
+  - Add Minitest patches `assert_changed` & `assert_not_changed`
+  - Remove `dedupe` in favor of new `find_duplicates`
+  - Add ActiveRecord `newest`
+- **1.1.1 - August 20, 2016**
+  - Add Array `not_empty?`
 - **1.1.0 - July 8, 2016**
   - Add ActiveRecord `find_or_create`, `reset_table`, `reset_auto_increment`, `depupe`
   - Add `starts_with?`, `begins_with?`, `ends_with?` aliases
