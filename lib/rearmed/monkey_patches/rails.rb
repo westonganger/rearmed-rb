@@ -11,7 +11,7 @@ if defined?(ActiveRecord)
 
         the_order = {}
         columns.each do |x|
-          order[x.to_s] = :desc
+          the_order[x.to_s] = :desc
         end
         self.order(the_order).limit(1).first
       end
@@ -87,6 +87,8 @@ if defined?(ActiveRecord)
         end
         
         options[:columns] ||= self.column_names.reject{|x| [self.primary_key, :created_at, :updated_at, :deleted_at].include?(x)}
+        
+        ids = self.select("MIN(#{self.primary_key}) as #{self.primary_key}").group(options[:columns]).pluck(self.primary_key)
 
         if options[:delete]
           if options[:delete] == true
@@ -98,12 +100,7 @@ if defined?(ActiveRecord)
               options[:delete][:soft_delete] = true
             end
           end
-          
-        end
 
-        ids = self.select("#{options[:keep].to_sym == :last ? 'MAX' : 'MIN'}(#{self.primary_key}) as #{self.primary_key}").group(options[:columns]).pluck(self.primary_key)
-
-        if options[:delete]
           duplicates = self.where.not(self.primary_key => ids)
 
           if options[:delete][:delete_method].to_sym == :delete
@@ -114,7 +111,7 @@ if defined?(ActiveRecord)
             end
           else
             duplicates.each do |x|
-              if !options[:soft_delete] && x.respond_to?(:really_destroy!)
+              if !options[:delete][:soft_delete] && x.respond_to?(:really_destroy!)
                 x.really_destroy!
               else
                 x.destroy!
