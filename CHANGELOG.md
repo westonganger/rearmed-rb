@@ -2,7 +2,7 @@ CHANGELOG
 ---------
 
 - 
-- **1.2.0 - August 31, 2016**
+- **1.2.0 - September 3, 2016**
   - Add Minitest patches `assert_changed` & `assert_not_changed`
   - Remove `dedupe` in favor of new `find_duplicates`
   - Add ActiveRecord `newest`

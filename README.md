@@ -230,7 +230,6 @@ If you want to contribute here are a couple of things you could do:
 
 - Add Tests for Rails methods
 - Get the `natural_sort` method to accept a block
-- Get the `assert_changed` and `assert_not_changed` method to accept a String with the variable name similar to Rails ``
 
 
 # Credits
