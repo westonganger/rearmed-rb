@@ -38,6 +38,10 @@ Rearmed.enabled_patches = {
     reset_auto_increment: false,
     find_relation_each: false,
     find_in_relation_batches: false,
+    callbacks: {
+      after_create_commit: false, 
+      after_update_commit: false
+    }
   },
   string: {
     valid_integer: false,
@@ -185,6 +189,12 @@ Post.reset_auto_increment(value: 1, column: :id) # column option is only relevan
 
 Post.find_in_relation_batches # this returns a relation instead of an array
 Post.find_relation_each # this returns a relation instead of an array
+
+### Callbacks
+class Post < ApplicationRecord
+  after_create_commit :do_work # is the same as:  after_commit :do_work, on: :create
+  after_update_commit :do_more_work # is the same as:  after_commit :do_work, on: :update
+end
 ```
 
 ##### Rails 4.x Backports
@@ -230,7 +240,6 @@ If you want to contribute here are a couple of things you could do:
 
 - Add Tests for Rails methods
 - Get the `natural_sort` method to accept a block
-- Get the `assert_changed` and `assert_not_changed` method to accept a String with the variable name similar to Rails ``
 
 
 # Credits

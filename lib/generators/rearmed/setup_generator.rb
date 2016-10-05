@@ -25,6 +25,10 @@ Rearmed.enabled_patches = {
     reset_auto_increment: false,
     find_relation_each: false,
     find_in_relation_batches: false,
+    callbacks: {
+      after_create_commit: false, 
+      after_update_commit: false
+    }
   },
   string: {
     valid_integer: false,

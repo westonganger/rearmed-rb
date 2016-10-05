@@ -87,8 +87,8 @@ if defined?(ActiveRecord)
         end
         
         options[:columns] ||= self.column_names.reject{|x| [self.primary_key, :created_at, :updated_at, :deleted_at].include?(x)}
-        
-        ids = self.select("MIN(#{self.primary_key}) as #{self.primary_key}").group(options[:columns]).pluck(self.primary_key)
+
+        duplicates = self.select("#{options[:columns].join(', ')}, COUNT(*)").group(options[:columns]).having("COUNT(*) > 1")
 
         if options[:delete]
           if options[:delete] == true
@@ -101,9 +101,26 @@ if defined?(ActiveRecord)
             end
           end
 
-          duplicates = self.where.not(self.primary_key => ids)
+          if options[:delete][:keep] == :last
+            duplicates.reverse!
+          end
+
+          used  = []
+          duplicates.reject! do |x| 
+            attrs = x.attributes.slice(*options[:columns].collect(&:to_s))
+
+            if used.include?(attrs)
+              return false
+            else
+              used.push attrs
+              return true
+            end
+          end
+          used = nil
 
           if options[:delete][:delete_method].to_sym == :delete
+            duplicates = self.where(id: duplicates.collect(&:id))
+
             if x.respond_to?(:delete_all!)
               duplicates.delete_all!
             else
@@ -120,7 +137,7 @@ if defined?(ActiveRecord)
           end
           return nil
         else
-          return self.where.not(self.primary_key => ids)
+          return duplicates
         end
       end
     end
@@ -244,6 +261,27 @@ if defined?(ActiveRecord)
             options[:start] ? where(table[primary_key].gteq(options[:start])).size : size
           end
         end
+      end
+    end
+  end
+
+
+  callbacks_enabled = Rearmed.dig(Rearmed.enabled_patches, :rails, :callbacks) == true
+
+  ActiveRecord::Transactions.module_eval do
+    if enabled || callbacks_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :after_create_commit)
+      def after_create_commit(method, &block)
+        args = [method, {on: :create}]
+        set_options_for_callbacks!(args)
+        set_callback(:commit, :after, args, &block)
+      end
+    end
+
+    if enabled || callbacks_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :after_update_commit)
+      def after_update_commit(method, &block)
+        args = [method, {on: :update}]
+        set_options_for_callbacks!(args)
+        set_callback(:commit, :after, args, &block)
       end
     end
   end
