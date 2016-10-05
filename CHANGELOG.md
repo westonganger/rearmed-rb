@@ -4,7 +4,7 @@ CHANGELOG
 - **1.2.1 - Oct 5, 2016**
   - Add Rails Callbacks `after_create_commit` and `after_update_commit`
   - Fix `find_duplicates`
-- **1.2.0 - August 31, 2016**
+- **1.2.0 - September 3, 2016**
   - Add Minitest patches `assert_changed` & `assert_not_changed`
   - Remove `dedupe` in favor of new `find_duplicates`
   - Add ActiveRecord `newest`
