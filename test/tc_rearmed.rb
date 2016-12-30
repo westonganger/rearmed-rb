@@ -137,13 +137,22 @@ class TestRearmed < MiniTest::Test
     hash = {foo: 'foo', bar: 'bar', other: 'other'}
     eql(Rearmed.only(hash, :foo, :bar), {foo: 'foo', bar: 'bar'})
 
-
     hash = {foo: nil, bar: nil, other: 'other'}
     eql(hash.compact, {other: 'other'})
 
     hash = {foo: nil, bar: nil, other: 'other'}
     hash.compact!
     eql(hash, {other: 'other'})
+
+    hash = {foo: :bar, bar: :foo}
+    eql(hash.join, "foo: bar, bar: foo")
+    eql(hash.join('___'), "foo: bar___bar: foo")
+    eql(hash.join{|k,v| v}, "bar, foo")
+    eql(hash.join('___'){|k,v| v}, "bar___foo")
+    eql(Rearmed.join(hash), "foo: bar, bar: foo")
+    eql(Rearmed.join(hash, '___'), "foo: bar___bar: foo")
+    eql(Rearmed.join(hash){|k,v| v}, "bar, foo")
+    eql(Rearmed.join(hash, '___'){|k,v| v}, "bar___foo")
   end
 
   def test_object

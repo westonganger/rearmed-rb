@@ -26,6 +26,16 @@ Hash.class_eval do
     end
   end
 
+  if hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :join)
+    def join(delimiter=', ', &block)
+      if block_given?
+        Rearmed.join(self, delimiter, &block)
+      else
+        Rearmed.join(self, delimiter)
+      end
+    end
+  end
+
   if RUBY_VERSION.to_f < 2.3 && hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :dig)
     def dig(*args)
       Rearmed.dig(self, *args)

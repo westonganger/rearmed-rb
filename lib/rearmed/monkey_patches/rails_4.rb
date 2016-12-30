@@ -51,7 +51,7 @@ if defined?(ActiveRecord)
         while records.any?
           records_size = records.size
           primary_key_offset = records.last.id
-          raise "Primary key not included in the custom select clause" unless primary_key_offset
+          raise ActiveRecordError, "Primary key not included in the custom select clause" unless primary_key_offset
 
           yield records
 

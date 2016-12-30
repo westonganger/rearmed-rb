@@ -239,7 +239,7 @@ if defined?(ActiveRecord)
         while records.any?
           records_size = records.size
           primary_key_offset = records.last.id
-          raise "Primary key not included in the custom select clause" unless primary_key_offset
+          raise ActiveRecordError, "Primary key not included in the custom select clause" unless primary_key_offset
 
           yield records
 
@@ -261,27 +261,6 @@ if defined?(ActiveRecord)
             options[:start] ? where(table[primary_key].gteq(options[:start])).size : size
           end
         end
-      end
-    end
-  end
-
-
-  callbacks_enabled = Rearmed.dig(Rearmed.enabled_patches, :rails, :callbacks) == true
-
-  ActiveRecord::Transactions.module_eval do
-    if enabled || callbacks_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :after_create_commit)
-      def after_create_commit(method, &block)
-        args = [method, {on: :create}]
-        set_options_for_callbacks!(args)
-        set_callback(:commit, :after, args, &block)
-      end
-    end
-
-    if enabled || callbacks_enabled || Rearmed.dig(Rearmed.enabled_patches, :rails, :after_update_commit)
-      def after_update_commit(method, &block)
-        args = [method, {on: :update}]
-        set_options_for_callbacks!(args)
-        set_callback(:commit, :after, args, &block)
       end
     end
   end

@@ -20,41 +20,39 @@ Run `rails g rearmed:setup` to create a settings files in `config/initializers/r
 
 Rearmed.enabled_patches = {
   rails_4: {
-    or: false,
-    link_to_confirm: false
+    link_to_confirm: false,
+    or: false
   },
   rails_3: {
+    all: false,
     pluck: false,
-    update_columns: false,
-    all: false
+    update_columns: false
   },
   rails: {
+    find_unused_columns:
+    find_duplicates: false,
+    find_in_relation_batches: false,
+    find_or_create: false,
+    find_relation_each: false,
+    newest: false,
     pluck_to_hash: false,
     pluck_to_struct: false,
-    find_or_create: false,
-    find_duplicates: false,
-    newest: false,
-    reset_table: false,
     reset_auto_increment: false,
-    find_relation_each: false,
-    find_in_relation_batches: false,
-    callbacks: {
-      after_create_commit: false, 
-      after_update_commit: false
-    }
+    reset_table: false
   },
   string: {
-    valid_integer: false,
-    valid_float: false,
-    to_bool: false,
-    starts_with: false,
     begins_with: false,
-    ends_with: false
+    ends_with: false,
+    starts_with: false,
+    to_bool: false,
+    valid_float: false,
+    valid_integer: false
   },
   hash: {
-    only: false,
+    compact: false,
     dig: false,
-    compact: false
+    join: false,
+    only: false,
   },
   array: {
     dig: false,
@@ -144,14 +142,16 @@ array.not_empty? # => true
 
 ### Hash Methods
 ```ruby
+my_hash.compact
+my_hash.compact!
+
+hash.join{|k,v| "#{k}: #{v}\n"}
+
 hash = {foo: 'foo', bar: 'bar', other: 'other'}
 hash.only(:foo, :bar) # => {foo: 'foo'}
 # or without monkey patch: Rearmed.only(hash, :foo, :bar)
 
 hash.only!(:foo, :bar)
-
-my_hash.compact
-my_hash.compact!
 ```
 
 ### Rails
@@ -218,7 +218,7 @@ my_hash.compact # See Hash methods above
 my_hash.compact!
 ```
 
-### Minitest Method
+### Minitest Methods
 ```ruby
 assert_changed 'user.name' do
   user.name = "Bob"
