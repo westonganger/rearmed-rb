@@ -1,13 +1,10 @@
 CHANGELOG
 ---------
 
-- **1.2.2 - Dec 30, 2016**
+- **1.2.1 - Dec 30, 2016**
   - Add Hash `join`
-  - Remove Rails Callbacks `after_create_commit` and `after_update_commit` as I think they were just a novelty item
-  - Some minor refractoring
-- **1.2.1 - Oct 5, 2016**
-  - Add Rails Callbacks `after_create_commit` and `after_update_commit`
   - Fix `find_duplicates`
+  - Some minor refractoring
 - **1.2.0 - September 3, 2016**
   - Add Minitest patches `assert_changed` & `assert_not_changed`
   - Remove `dedupe` in favor of new `find_duplicates`
