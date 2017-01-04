@@ -65,7 +65,7 @@ module Rearmed
 
   def self.natural_sort(array, options={})
     if block_given?
-      Rearmed::BlockFoundError
+      Rearmed::Exceptions::BlockFoundError
     else
       array.sort do |a,b| 
         if options[:reverse] == true
