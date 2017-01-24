@@ -1,8 +1,8 @@
 CHANGELOG
 ---------
 
-- **1.2.1 - Dec 30, 2016**
-  - Add Hash `join`
+- **1.2.1 - Jan 24, 2017**
+  - Add Hash `join`, `to_struct`
   - Fix `find_duplicates`
   - Some minor refractoring
 - **1.2.0 - September 3, 2016**
