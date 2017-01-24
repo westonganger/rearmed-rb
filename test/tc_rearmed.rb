@@ -153,6 +153,12 @@ class TestRearmed < MiniTest::Test
     eql(Rearmed.join(hash, '___'), "foo: bar___bar: foo")
     eql(Rearmed.join(hash){|k,v| v}, "bar, foo")
     eql(Rearmed.join(hash, '___'){|k,v| v}, "bar___foo")
+
+    hash = {foo: :bar, bar: 'foo'}
+    struct = hash.to_struct
+    assert(struct.is_a?(Struct))
+    eql(struct.foo, :bar)
+    eql(struct.bar, 'foo')
   end
 
   def test_object

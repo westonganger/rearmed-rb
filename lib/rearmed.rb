@@ -1,3 +1,5 @@
+require 'rearmed/version'
+
 require 'rearmed/methods'
 require 'rearmed/exceptions'
 

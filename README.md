@@ -53,6 +53,7 @@ Rearmed.enabled_patches = {
     dig: false,
     join: false,
     only: false,
+    to_struct: false
   },
   array: {
     dig: false,
@@ -152,6 +153,8 @@ hash.only(:foo, :bar) # => {foo: 'foo'}
 # or without monkey patch: Rearmed.only(hash, :foo, :bar)
 
 hash.only!(:foo, :bar)
+
+hash.to_struct
 ```
 
 ### Rails
@@ -189,23 +192,19 @@ Post.reset_auto_increment(value: 1, column: :id) # column option is only relevan
 
 Post.find_in_relation_batches # this returns a relation instead of an array
 Post.find_relation_each # this returns a relation instead of an array
-
-### Callbacks
-class Post < ApplicationRecord
-  after_create_commit :do_work # is the same as:  after_commit :do_work, on: :create
-  after_update_commit :do_more_work # is the same as:  after_commit :do_work, on: :update
-end
 ```
 
 ##### Rails 4.x Backports
 ```ruby
+# returns to rails 3 behaviour of allowing confirm attribute as well as data-confirm
+= link_to 'Delete', post_path(post), method: :delete, confirm: "Are you sure you want to delete this post?" 
+
+# This version of `or` behaves way nicer than the one implemented in Rails 5, it allows you to do what you need. 
+# However this patch does not work in Rails 5+
 Post.where(name: 'foo').or.where(content: 'bar')
 Post.where(name: 'foo').or.my_custom_scope
 Post.where(name: 'foo').or(Post.where(content: 'bar'))
 Post.where(name: 'foo).or(content: 'bar')
-
-= link_to 'Delete', post_path(post), method: :delete, confirm: "Are you sure you want to delete this post?" 
-# returns to rails 3 behaviour of allowing confirm attribute as well as data-confirm
 ```
 
 ##### Rails 3.x Backports

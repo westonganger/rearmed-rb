@@ -32,6 +32,7 @@
     dig: false,
     join: false,
     only: false,
+    to_struct: false
   },
   array: {
     dig: false,
