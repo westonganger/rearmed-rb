@@ -1,7 +1,7 @@
 # Rearmed Ruby
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
-A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails
+A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails (optional)
 
 The difference between this library and others is that all monkey patching is performed in an opt-in way because you shouldnt be using methods you dont know about anyways. 
 
@@ -13,23 +13,48 @@ For applicable methods I have placed the implementation inside the Rearmed modul
 gem 'rearmed'
 ```
 
-Run `rails g rearmed:setup` to create a settings files in `config/initializers/rearmed.rb` where you can opt-in to the monkey patches available in the library. Set these values to true if you want to enable the applicable monkey patch.
+Run `rails g rearmed:setup` to create a settings files in `config/initializers/rearmed.rb` where you can opt-in to the monkey patches available in the library. Set these values to true if you want to enable the applicable monkey patch. If your not using Rails then just copy config this into your file and start from there.
 
 ```ruby
 # config/initializers/rearmed.rb
 
 Rearmed.enabled_patches = {
-  rails_4: {
-    link_to_confirm: false,
-    or: false
+  array: {
+    dig: false,
+    delete_first: false,
+    not_empty: false
   },
-  rails_3: {
-    all: false,
-    pluck: false,
-    update_columns: false
+  date: {
+    now: false
+  },
+  enumerable: {
+    natural_sort: false,
+    natural_sort_by: false
+  },
+  hash: {
+    compact: false,
+    dig: false,
+    join: false,
+    only: false,
+    to_struct: false
+  },
+  object: {
+    in: false,
+    not_nil: false
+  },
+  string: {
+    begins_with: false,
+    ends_with: false,
+    starts_with: false,
+    to_bool: false,
+    valid_float: false,
+    valid_integer: false
+  },
+  minitest: {
+    assert_changed: false,
+    assert_not_changed: false
   },
   rails: {
-    find_unused_columns:
     find_duplicates: false,
     find_in_relation_batches: false,
     find_or_create: false,
@@ -40,44 +65,75 @@ Rearmed.enabled_patches = {
     reset_auto_increment: false,
     reset_table: false
   },
-  string: {
-    begins_with: false,
-    ends_with: false,
-    starts_with: false,
-    to_bool: false,
-    valid_float: false,
-    valid_integer: false
+  rails_4: {
+    link_to_confirm: false,
+    or: false
   },
-  hash: {
-    compact: false,
-    dig: false,
-    join: false,
-    only: false,
-    to_struct: false
-  },
-  array: {
-    dig: false,
-    delete_first: false,
-    not_empty: false
-  },
-  enumerable: {
-    natural_sort: false,
-    natural_sort_by: false
-  },
-  object: {
-    in: false,
-    not_nil: false
-  },
-  date: {
-    now: false
-  },
-  minitest: {
-    assert_changed: false,
-    assert_not_changed: false
+  rails_3: {
+    all: false,
+    pluck: false,
+    update_columns: false
   }
 }
 
+
 require 'rearmed/apply_patches'
+```
+
+### Array Methods
+```ruby
+array = [1,2,1,4,1]
+array.delete_first(1) # => 1
+puts array #=> [2,1,4,1]
+array.delete_first{|x| 1 == x} # => 1
+puts array # => [2,4,1]
+array.delete_first # => 2
+puts array # => [4,1]
+
+array.not_empty? # => true
+
+# Only available on array and hash in Ruby 2.2.x or below
+items = [{foo: ['foo','bar']}, {test: 'thing'}]
+items.dig(0, :foo, 1) # => 'bar'
+# or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
+```
+
+### Enumerable Methods (Array, Hash, etc.)
+```ruby
+items = ['1.1', '1.11', '1.2']
+items.natural_sort 
+items.natural_sort(reverse: true) # because natural_sort does not accept a block, accepting PR's on this
+# or without monkey patch: Rearmed.natural_sort(items) or Rearmed.natural_sort(items, reverse: true)
+
+items = [{version: "1.1"}, {version: "1.11"}, {version: "1.2"}]
+items.natural_sort_by{|x| x[:version]} 
+# or without monkey patch: Rearmed.natural_sort_by(items){|x| x[:version]}
+```
+
+### Date
+```ruby
+Date.now
+```
+
+### Hash Methods
+```ruby
+my_hash.compact
+my_hash.compact!
+
+hash.join{|k,v| "#{k}: #{v}\n"}
+
+hash = {foo: 'foo', bar: 'bar', other: 'other'}
+hash.only(:foo, :bar) # => {foo: 'foo'}
+# or without monkey patch: Rearmed.only(hash, :foo, :bar)
+
+hash.only!(:foo, :bar)
+
+hash.to_struct
+
+# Only available on array and hash in Ruby 2.2.x or below
+items = [{foo: ['foo','bar']}, {test: 'thing'}]
+items.dig(0, :foo, 1) # => 'bar'
+# or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
 ```
 
 ### Object
@@ -106,55 +162,19 @@ my_var.in?(1,2,3) # or with splat arguments
 'bar'.ends_with?('ar') # => true
 ```
 
-### Date
+### Minitest Methods
 ```ruby
-Date.now
-```
+assert_changed 'user.name' do
+  user.name = "Bob"
+end
 
-### Enumerable Methods (Array, Hash, etc.)
-```ruby
-items = ['1.1', '1.11', '1.2']
-items.natural_sort 
-items.natural_sort(reverse: true) # because natural_sort does not accept a block, accepting PR's on this
-# or without monkey patch: Rearmed.natural_sort(items) or Rearmed.natural_sort(items, reverse: true)
+assert_not_changed -> { user.name } do
+  user.update(user_params)
+end
 
-items = [{version: "1.1"}, {version: "1.11"}, {version: "1.2"}]
-items.natural_sort_by{|x| x[:version]} 
-# or without monkey patch: Rearmed.natural_sort_by(items){|x| x[:version]}
-
-# Only available on array and hash in Ruby 2.2.x or below
-items = [{foo: ['foo','bar']}, {test: 'thing'}]
-items.dig(0, :foo, 1) # => 'bar'
-# or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
-```
-
-### Array Methods
-```ruby
-array = [1,2,1,4,1]
-array.delete_first(1) # => 1
-puts array #=> [2,1,4,1]
-array.delete_first{|x| 1 == x} # => 1
-puts array # => [2,4,1]
-array.delete_first # => 2
-puts array # => [4,1]
-
-array.not_empty? # => true
-```
-
-### Hash Methods
-```ruby
-my_hash.compact
-my_hash.compact!
-
-hash.join{|k,v| "#{k}: #{v}\n"}
-
-hash = {foo: 'foo', bar: 'bar', other: 'other'}
-hash.only(:foo, :bar) # => {foo: 'foo'}
-# or without monkey patch: Rearmed.only(hash, :foo, :bar)
-
-hash.only!(:foo, :bar)
-
-hash.to_struct
+assert_not_changed lambda{ user.name } do
+  user.update(user_params)
+end
 ```
 
 ### Rails
@@ -215,21 +235,6 @@ Post.pluck(:name, :id) # adds multi column pluck support ex. => [['first', 1], [
 
 my_hash.compact # See Hash methods above
 my_hash.compact!
-```
-
-### Minitest Methods
-```ruby
-assert_changed 'user.name' do
-  user.name = "Bob"
-end
-
-assert_not_changed -> { user.name } do
-  user.update(user_params)
-end
-
-assert_not_changed lambda{ user.name } do
-  user.update(user_params)
-end
 ```
 
 # Contributing / Todo
