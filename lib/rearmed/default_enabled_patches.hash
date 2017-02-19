@@ -35,15 +35,22 @@
     assert_not_changed: false
   },
   rails: {
-    find_duplicates: false,
-    find_in_relation_batches: false,
-    find_or_create: false,
-    find_relation_each: false,
-    newest: false,
-    pluck_to_hash: false,
-    pluck_to_struct: false,
-    reset_auto_increment: false,
-    reset_table: false
+    active_record: {
+      find_duplicates: false,
+      find_in_relation_batches: false,
+      find_or_create: false,
+      find_relation_each: false,
+      newest: false,
+      pluck_to_hash: false,
+      pluck_to_struct: false,
+      reset_auto_increment: false,
+      reset_table: false
+    },
+    other: {
+      field_is_array: false,
+      options_for_select_include_blank: false,
+      options_from_collection_for_select_include_blank: false
+    }
   },
   rails_4: {
     link_to_confirm: false,

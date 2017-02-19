@@ -1,6 +1,9 @@
 CHANGELOG
 ---------
 
+- **1.2.2 - Feb 19, 2017**
+  - Add `field_is_array`, `options_for_select_include_blank`, `options_from_collect_for_select_include_blank`
+  - Namespace rails patches to active_record and other
 - **1.2.1 - Jan 24, 2017**
   - Add Hash `join`, `to_struct`
   - Fix `find_duplicates`

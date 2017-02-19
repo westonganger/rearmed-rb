@@ -55,15 +55,22 @@ Rearmed.enabled_patches = {
     assert_not_changed: false
   },
   rails: {
-    find_duplicates: false,
-    find_in_relation_batches: false,
-    find_or_create: false,
-    find_relation_each: false,
-    newest: false,
-    pluck_to_hash: false,
-    pluck_to_struct: false,
-    reset_auto_increment: false,
-    reset_table: false
+    active_record: {
+      find_duplicates: false,
+      find_in_relation_batches: false,
+      find_or_create: false,
+      find_relation_each: false,
+      newest: false,
+      pluck_to_hash: false,
+      pluck_to_struct: false,
+      reset_auto_increment: false,
+      reset_table: false
+    },
+    other: {
+      field_is_array: false,
+      options_for_select_include_blank: false,
+      options_from_collection_for_select_include_blank: false
+    }
   },
   rails_4: {
     link_to_confirm: false,
@@ -212,6 +219,19 @@ Post.reset_auto_increment(value: 1, column: :id) # column option is only relevan
 
 Post.find_in_relation_batches # this returns a relation instead of an array
 Post.find_relation_each # this returns a relation instead of an array
+```
+
+##### Other
+
+```ruby
+# field_is_array: works with field type tag, form_for, simple form, etc
+= text_field_tag :name, is_array: true #=> <input type='text' name='name[]' />
+
+# options_for_select_include_blank
+options_for_select(@users.map{|x| [x.name, x.id]}, include_blank: true, selected: params[:user_id])
+
+# options_from_collection_for_select_include_blank
+options_from_collection_for_select(@users, 'id', 'name', include_blank: true, selected: params[:user_id])
 ```
 
 ##### Rails 4.x Backports
