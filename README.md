@@ -7,7 +7,7 @@ I have recently extracted the Rails and Minitest monkey patches to another gem h
 
 The difference between this library and others is that all monkey patching is performed in an opt-in way because you shouldnt be using methods you dont know about anyways. 
 
-When possible I have placed the method implementations inside the Rearmed module so if you don't like monkey patching or are working on the project with a team then you can use these methods instead. You can see how to use this implementation below the relevant methods if available.
+When possible I have placed the method implementations inside the Rearmed module so if you don't like monkey patching or are working on the project with a team then you can use these methods instead. You can then skip the config and see how to use each implementation below the relevant methods documentation.
 
 ```ruby
 # Gemfile
@@ -15,9 +15,10 @@ When possible I have placed the method implementations inside the Rearmed module
 gem 'rearmed'
 ```
 
-## Usage
+# Usage
 
-### Config
+## Setup Enabled Monkey Patches (all are optional)
+
 ```ruby
 # config/initializers/rearmed.rb
 
@@ -59,7 +60,7 @@ Rearmed.enabled_patches = {
 require 'rearmed/apply_patches'
 ```
 
-### Array Methods
+## Array Methods
 ```ruby
 array = [1,2,1,4,1]
 array.delete_first(1) # => 1
@@ -77,7 +78,7 @@ items.dig(0, :foo, 1) # => 'bar'
 # or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
 ```
 
-### Enumerable Methods (Array, Hash, etc.)
+## Enumerable Methods (Array, Hash, etc.)
 ```ruby
 items = ['1.1', '1.11', '1.2']
 items.natural_sort 
@@ -89,12 +90,12 @@ items.natural_sort_by{|x| x[:version]}
 # or without monkey patch: Rearmed.natural_sort_by(items){|x| x[:version]}
 ```
 
-### Date
+## Date
 ```ruby
 Date.now
 ```
 
-### Hash Methods
+## Hash Methods
 ```ruby
 my_hash.compact
 my_hash.compact!
@@ -115,7 +116,7 @@ items.dig(0, :foo, 1) # => 'bar'
 # or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
 ```
 
-### Object
+## Object
 ```ruby
 my_var.not_nil?
 
@@ -124,7 +125,7 @@ my_var.in?([1,2,3])
 my_var.in?(1,2,3) # or with splat arguments
 ```
 
-### String
+## String
 ```ruby
 '123'.valid_integer?
 # or without monkey patch: Rearmed.valid_integer?('123')
