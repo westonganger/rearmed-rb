@@ -35,7 +35,7 @@ module Rearmed
     return current_val
   end
 
-  def self.join(hash, delimiter=', ', &block)
+  def self.hash_join(hash, delimiter=', ', &block)
     unless block_given?
       block = -> (k,v) {
         "#{k}: #{v}"
@@ -76,8 +76,12 @@ module Rearmed
       end
     end
   end
+  
+  def self.hash_compact(hash)
+    hash.reject{|_, value| value.nil?}
+  end
 
-  def self.only(hash, *keys)
+  def self.hash_only(hash, *keys)
     keys.map!{|key| hash.convert_key(key)} if hash.respond_to?(:convert_key, true)
     keys.each_with_object(hash.class.new){|k, new_hash| new_hash[k] = hash[k] if hash.has_key?(k)}
   end
@@ -98,6 +102,10 @@ module Rearmed
 
   def self.valid_float?(str)
     str =~ /(^(\d+)(\.)?(\d+)?$)|(^(\d+)?(\.)(\d+)$)/ ? true : false
+  end
+
+  def self.hash_to_struct(hash)
+    Struct.new(*hash.keys).new(*hash.values)
   end
 
   private

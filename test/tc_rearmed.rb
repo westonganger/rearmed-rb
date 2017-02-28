@@ -58,10 +58,9 @@ class TestRearmed < MiniTest::Test
     eql(str.to_bool, false)
 
     str = 'not true'
-    eql(str.to_bool, nil)
+    assert_nil(str.to_bool)
 
 
-    # Test Rearmed methods (just cause really)
     str = 'true'
     eql(Rearmed.to_bool(str), true)
 
@@ -99,10 +98,10 @@ class TestRearmed < MiniTest::Test
     array = [{foo: ['foo','bar']}, {test: 'thing'}]
 
     eql(array.dig(0, :foo, 1), 'bar')
-    eql(array.dig(0, :foo, 2), nil)
+    assert_nil(array.dig(0, :foo, 2))
 
     eql(Rearmed.dig(array, 1, :test), 'thing')
-    eql(Rearmed.dig(array, 1, :bar), nil)
+    assert_nil(Rearmed.dig(array, 1, :bar))
 
     hash = {a: {foo: ['bar']}, b: {c: 'c'}}
     
@@ -135,10 +134,11 @@ class TestRearmed < MiniTest::Test
     eql(hash, {foo: 'foo', bar: 'bar'})
 
     hash = {foo: 'foo', bar: 'bar', other: 'other'}
-    eql(Rearmed.only(hash, :foo, :bar), {foo: 'foo', bar: 'bar'})
+    eql(Rearmed.hash_only(hash, :foo, :bar), {foo: 'foo', bar: 'bar'})
 
     hash = {foo: nil, bar: nil, other: 'other'}
     eql(hash.compact, {other: 'other'})
+    eql(Rearmed.hash_compact(hash), {other: 'other'})
 
     hash = {foo: nil, bar: nil, other: 'other'}
     hash.compact!
@@ -149,13 +149,18 @@ class TestRearmed < MiniTest::Test
     eql(hash.join('___'), "foo: bar___bar: foo")
     eql(hash.join{|k,v| v}, "bar, foo")
     eql(hash.join('___'){|k,v| v}, "bar___foo")
-    eql(Rearmed.join(hash), "foo: bar, bar: foo")
-    eql(Rearmed.join(hash, '___'), "foo: bar___bar: foo")
-    eql(Rearmed.join(hash){|k,v| v}, "bar, foo")
-    eql(Rearmed.join(hash, '___'){|k,v| v}, "bar___foo")
+    eql(Rearmed.hash_join(hash), "foo: bar, bar: foo")
+    eql(Rearmed.hash_join(hash, '___'), "foo: bar___bar: foo")
+    eql(Rearmed.hash_join(hash){|k,v| v}, "bar, foo")
+    eql(Rearmed.hash_join(hash, '___'){|k,v| v}, "bar___foo")
 
     hash = {foo: :bar, bar: 'foo'}
     struct = hash.to_struct
+    assert(struct.is_a?(Struct))
+    eql(struct.foo, :bar)
+    eql(struct.bar, 'foo')
+
+    struct = Rearmed.hash_to_struct(hash)
     assert(struct.is_a?(Struct))
     eql(struct.foo, :bar)
     eql(struct.bar, 'foo')
@@ -188,38 +193,6 @@ class TestRearmed < MiniTest::Test
 
     str = 'test'
     eql(str.in?('a real string'), false)
-  end
-
-  def test_minitest
-    str = 'first'
-    assert_changed "str" do
-      str = 'second'
-    end
-
-    str = 'first'
-    assert_changed ->{ str } do
-      str = 'second'
-    end
-
-    name = 'first'
-    assert_changed lambda{ name } do
-      name = 'second'
-    end
-
-    name = 'first'
-    assert_not_changed 'name' do
-      name = 'first'
-    end
-
-    name = 'first'
-    assert_not_changed ->{ name } do
-      name = 'first'
-    end
-
-    name = 'first'
-    assert_not_changed lambda{ name } do
-      name = 'first'
-    end
   end
 
 end

@@ -97,8 +97,10 @@ Date.now
 
 ## Hash Methods
 ```ruby
-my_hash.compact
-my_hash.compact!
+hash.compact
+# or without monkey patch: Rearmed.compact(hash)
+
+hash.compact!
 
 hash.join{|k,v| "#{k}: #{v}\n"}
 
@@ -109,6 +111,7 @@ hash.only(:foo, :bar) # => {foo: 'foo'}
 hash.only!(:foo, :bar)
 
 hash.to_struct
+# or without monkey patch: Rearmed.hash_to_struct(hash)
 
 # Only available on array and hash in Ruby 2.2.x or below
 items = [{foo: ['foo','bar']}, {test: 'thing'}]

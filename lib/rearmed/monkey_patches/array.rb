@@ -21,7 +21,7 @@ Array.module_eval do
     end
   end
 
-  if RUBY_VERSION.to_f < 2.3 && array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :dig)
+  if ![].respond_to?(:dig) && (array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :dig))
     def dig(*args)
       Rearmed.dig(self, *args)
     end

@@ -3,6 +3,7 @@ CHANGELOG
 
 - **1.3.0 - Feb 28, 2017**
   - Remove Rails and Minitest methods. Those methods moved to https://github.com/westonganger/rearmed_rails
+  - Change methods names of Rearmed namespaced hash methods to convey better meaning
 - **1.2.2 - Feb 19, 2017**
   - Add `field_is_array`, `options_for_select_include_blank`, `options_from_collect_for_select_include_blank`
   - Namespace rails patches to active_record and other
