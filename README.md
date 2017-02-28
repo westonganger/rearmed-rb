@@ -1,11 +1,13 @@
 # Rearmed Ruby
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
-A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails (optional)
+A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates
+
+I have recently extracted the Rails and Minitest monkey patches to another gem https://github.com/westonganger/rearmed_rails because the Rails methods are getting quite extensive.
 
 The difference between this library and others is that all monkey patching is performed in an opt-in way because you shouldnt be using methods you dont know about anyways. 
 
-For applicable methods I have placed the implementation inside the Rearmed module so if you don't like monkey patching or are working on the project with a team then you can use these methods instead. You can see how to use this implementation below the relevant methods here in the readme.
+When possible I have placed the method implementations inside the Rearmed module so if you don't like monkey patching or are working on the project with a team then you can use these methods instead. You can see how to use this implementation below the relevant methods if available.
 
 ```ruby
 # Gemfile
@@ -13,8 +15,9 @@ For applicable methods I have placed the implementation inside the Rearmed modul
 gem 'rearmed'
 ```
 
-Run `rails g rearmed:setup` to create a settings files in `config/initializers/rearmed.rb` where you can opt-in to the monkey patches available in the library. Set these values to true if you want to enable the applicable monkey patch. If your not using Rails then just copy config this into your file and start from there.
+## Usage
 
+### Config
 ```ruby
 # config/initializers/rearmed.rb
 
@@ -49,30 +52,6 @@ Rearmed.enabled_patches = {
     to_bool: false,
     valid_float: false,
     valid_integer: false
-  },
-  minitest: {
-    assert_changed: false,
-    assert_not_changed: false
-  },
-  rails: {
-    find_duplicates: false,
-    find_in_relation_batches: false,
-    find_or_create: false,
-    find_relation_each: false,
-    newest: false,
-    pluck_to_hash: false,
-    pluck_to_struct: false,
-    reset_auto_increment: false,
-    reset_table: false
-  },
-  rails_4: {
-    link_to_confirm: false,
-    or: false
-  },
-  rails_3: {
-    all: false,
-    pluck: false,
-    update_columns: false
   }
 }
 
@@ -140,7 +119,7 @@ items.dig(0, :foo, 1) # => 'bar'
 ```ruby
 my_var.not_nil?
 
-# Only for non-Rails environments, as Rails already has this method
+# In ActiveSupport / Rails this is not patched as this method is already defined there
 my_var.in?([1,2,3])
 my_var.in?(1,2,3) # or with splat arguments
 ```
@@ -162,87 +141,11 @@ my_var.in?(1,2,3) # or with splat arguments
 'bar'.ends_with?('ar') # => true
 ```
 
-### Minitest Methods
-```ruby
-assert_changed 'user.name' do
-  user.name = "Bob"
-end
-
-assert_not_changed -> { user.name } do
-  user.update(user_params)
-end
-
-assert_not_changed lambda{ user.name } do
-  user.update(user_params)
-end
-```
-
-### Rails
-
-##### Additional ActiveRecord Methods
-Note: All methods which involve deletion are compatible with Paranoia & ActsAsParanoid
-
-```ruby
-Post.pluck_to_hash(:name, :category, :id)
-Post.pluck_to_struct(:name, :category, :id)
-
-Post.find_or_create(name: 'foo', content: 'bar') # use this instead of the super confusing first_or_create method
-Post.find_or_create!(name: 'foo', content: 'bar')
-
-Post.find_duplicates # return active record relation of all records that have duplicates. By default it skips the primary_key, created_at, updated_at, & deleted_at columns
-Post.find_duplicates(:name) # find duplicates based on the name attribute
-Post.find_duplicates(:name, :category) # find duplicates based on the name & category attribute
-Post.find_duplicates(self.column_names.reject{|x| ['id','created_at','updated_at','deleted_at'].include?(x)})
-
-# It also can delete duplicates. Valid values for keep are :first & :last. Valid values for delete_method are :destroy & :delete. soft_delete is only used if you are using acts_as_paranoid on your model.
-Post.find_duplicates(:name, :category, delete: true)
-Post.find_duplicates(:name, :category, delete: {keep: :first, delete_method: :destroy, soft_delete: true}) # these are the default settings for delete: true
-
-Post.newest # get the newest post, by default ordered by :created_at
-Post.newest(:updated_at) # different sort order
-Post.newest(:published_at, :created_at) # multiple columns to sort on
-
-Post.reset_table # delete all records from table and reset autoincrement column (id), works with mysql/mariadb/postgresql/sqlite
-# or with options
-Post.reset_table(delete_method: :destroy) # to ensure all callbacks are fired
-
-Post.reset_auto_increment # reset mysql/mariadb/postgresql/sqlite auto-increment column, if contains records then defaults to starting from next available number
-# or with options
-Post.reset_auto_increment(value: 1, column: :id) # column option is only relevant for postgresql
-
-Post.find_in_relation_batches # this returns a relation instead of an array
-Post.find_relation_each # this returns a relation instead of an array
-```
-
-##### Rails 4.x Backports
-```ruby
-# returns to rails 3 behaviour of allowing confirm attribute as well as data-confirm
-= link_to 'Delete', post_path(post), method: :delete, confirm: "Are you sure you want to delete this post?" 
-
-# This version of `or` behaves way nicer than the one implemented in Rails 5, it allows you to do what you need. 
-# However this patch does not work in Rails 5+
-Post.where(name: 'foo').or.where(content: 'bar')
-Post.where(name: 'foo').or.my_custom_scope
-Post.where(name: 'foo').or(Post.where(content: 'bar'))
-Post.where(name: 'foo).or(content: 'bar')
-```
-
-##### Rails 3.x Backports
-```ruby
-Post.all # Now returns AR relation
-Post.first.update_columns(a: 'foo', b: 'bar')
-Post.pluck(:name, :id) # adds multi column pluck support ex. => [['first', 1], ['second', 2], ['third', 3]]
-
-my_hash.compact # See Hash methods above
-my_hash.compact!
-```
-
 # Contributing / Todo
 If you want to request a method please raise an issue and we can discuss the implementation. 
 
 If you want to contribute here are a couple of things you could do:
 
-- Add Tests for Rails methods
 - Get the `natural_sort` method to accept a block
 
 

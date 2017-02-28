@@ -1,6 +1,8 @@
 CHANGELOG
 ---------
 
+- **1.3.0 - Feb 28, 2017**
+  - Remove Rails and Minitest methods. Those methods moved to https://github.com/westonganger/rearmed_rails
 - **1.2.1 - Jan 24, 2017**
   - Add Hash `join`, `to_struct`
   - Fix `find_duplicates`
