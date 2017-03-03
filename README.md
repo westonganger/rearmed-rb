@@ -1,7 +1,7 @@
 # Rearmed Ruby
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
-A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates
+A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates. [Rearmed is a collection of plugins](https://github.com/westonganger?utf8=%E2%9C%93&tab=repositories&q=rearmed) which are driven by making life easier & coding more natural.
 
 I have recently extracted the Rails and Minitest monkey patches to another gem https://github.com/westonganger/rearmed_rails because the Rails methods are getting quite extensive.
 
@@ -72,7 +72,7 @@ puts array # => [4,1]
 
 array.not_empty? # => true
 
-# Only available on array and hash in Ruby 2.2.x or below
+# Only monkey patched if using Ruby 2.2.x or below
 items = [{foo: ['foo','bar']}, {test: 'thing'}]
 items.dig(0, :foo, 1) # => 'bar'
 # or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
@@ -108,12 +108,12 @@ hash.only!(:foo, :bar)
 hash.to_struct
 # or without monkey patch: Rearmed.hash_to_struct(hash)
 
-# Only available on array and hash in Ruby 2.2.x or below
+# Only monkey patched if using Ruby 2.2.x or below
 items = [{foo: ['foo','bar']}, {test: 'thing'}]
 items.dig(0, :foo, 1) # => 'bar'
 # or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
 
-# Only available on array and hash in Ruby 2.3.x or below
+# Only monkey patched if using Ruby 2.3.x or below
 hash.compact
 # or without monkey patch: Rearmed.hash_compact(hash)
 hash.compact!
@@ -123,7 +123,7 @@ hash.compact!
 ```ruby
 my_var.not_nil?
 
-# In ActiveSupport / Rails this is not patched as this method is already defined there
+# Only monkey patched if not using ActiveSupport / Rails as this method is already defined there
 my_var.in?([1,2,3])
 my_var.in?(1,2,3) # or with splat arguments
 ```
