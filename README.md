@@ -1,4 +1,4 @@
-# Rearmed Ruby [![Build Status](https://api.travis-ci.org/westonganger/rearmed-rb.svg?branch=master)](https://travis-ci.org/westonganger/rearmed-rb)
+# Rearmed Ruby <a href='https://travis-ci.org/westonganger/rearmed-rb' target='_blank'><img src='https://api.travis-ci.org/westonganger/rearmed-rb.svg?branch=master' border='0' alt='Build Status' /></a> 
 
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
