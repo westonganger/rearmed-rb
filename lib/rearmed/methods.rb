@@ -37,9 +37,7 @@ module Rearmed
 
   def self.hash_join(hash, delimiter=', ', &block)
     unless block_given?
-      block = -> (k,v) {
-        "#{k}: #{v}"
-      }
+      block = ->(k,v){ "#{k}: #{v}" }
     end
 
     str = ""

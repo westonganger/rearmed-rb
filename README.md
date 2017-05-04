@@ -1,4 +1,5 @@
-# Rearmed Ruby
+# Rearmed Ruby [![Build Status](https://api.travis-ci.org/westonganger/rearmed-rb.svg?branch=master)](https://travis-ci.org/westonganger/rearmed-rb)
+
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
 A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates. [Rearmed is a collection of plugins](https://github.com/westonganger?utf8=%E2%9C%93&tab=repositories&q=rearmed) which are driven by making life easier & coding more natural.
@@ -9,9 +10,11 @@ The difference between this library and others is that all monkey patching is pe
 
 When possible I have placed the method implementations inside the Rearmed module so if you don't like monkey patching or are working on the project with a team then you can use these methods instead. You can then skip the config and see how to use each implementation below the relevant methods documentation.
 
-```ruby
-# Gemfile
 
+# Install
+
+Add the following line to your gemfile:
+```ruby
 gem 'rearmed'
 ```
 
@@ -154,6 +157,7 @@ If you want to contribute here are a couple of things you could do:
 
 
 # Credits
-Created by Weston Ganger - @westonganger
+
+Created and Maintained by [Weston Ganger - @westonganger](https://github.com/westonganger)
 
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
