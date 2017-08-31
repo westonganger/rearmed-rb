@@ -16,4 +16,14 @@ Enumerable.module_eval do
       end
     end
   end
+
+  if enumerable_enabled || Rearmed.dig(Rearmed.enabled_patches, :enumerable, :select_map)
+    def select_map
+      if block_given?
+        Rearmed.select_map(self){|x| yield(x)}
+      else
+        Rearmed.select_map(self)
+      end
+    end
+  end
 end

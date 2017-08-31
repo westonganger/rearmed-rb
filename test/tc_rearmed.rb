@@ -42,6 +42,10 @@ class TestRearmed < MiniTest::Test
     str = '32a'
     eql(str.valid_integer?, false)
 
+
+    str = '12'
+    eql(Rearmed.valid_integer?(str), true)
+
     str = '132.2'
     eql(str.valid_float?, true)
 
@@ -50,6 +54,10 @@ class TestRearmed < MiniTest::Test
 
     str = '12.1a'
     eql(str.valid_float?, false)
+
+    str = '1.2'
+    eql(Rearmed.valid_float?(str), true)
+
 
     str = 'true'
     eql(str.to_bool, true)
@@ -60,15 +68,29 @@ class TestRearmed < MiniTest::Test
     str = 'not true'
     assert_nil(str.to_bool)
 
-
     str = 'true'
     eql(Rearmed.to_bool(str), true)
 
-    str = '12'
-    eql(Rearmed.valid_integer?(str), true)
 
-    str = '1.2'
-    eql(Rearmed.valid_float?(str), true)
+    str1 = 'foo'
+    str2 = 'foo'
+    eql(str1.casecmp?(str2), true)
+
+    str1 = 'foo'
+    str2 = 'FOO'
+    eql(str1.casecmp?(str2), true)
+
+    str1 = 'foo'
+    str2 = 'foobar'
+    eql(str1.casecmp?(str2), false)
+
+    str1 = 'foo'
+    str2 = 'fo'
+    eql(str1.casecmp?(str2), false)
+
+    str1 = 'foo'
+    str2 = 'foo'
+    eql(Rearmed.casecmp?(str1, str2), true)
   end
 
   def test_date
@@ -77,36 +99,21 @@ class TestRearmed < MiniTest::Test
 
   def test_enumerable
     items = ['1.1', '1.11', '1.2']
-
     eql(items.natural_sort, ['1.1','1.2','1.11'])
-
     eql(items.natural_sort(reverse: true), ['1.11','1.2','1.1'])
-
     eql(Rearmed.natural_sort(items), ['1.1','1.2','1.11'])
-
     eql(Rearmed.natural_sort(items, reverse: true), ['1.11','1.2','1.1'])
 
-
     items = [{version: "1.1"}, {version: "1.11"}, {version: "1.2"}]
-    
     eql(items.natural_sort_by{|x| x[:version]}, [{version: "1.1"}, {version: "1.2"}, {version: "1.11"}])
-    
     eql(Rearmed.natural_sort_by(items){|x| x[:version]}, [{version: "1.1"}, {version: "1.2"}, {version: "1.11"}])
 
+    items = [0, 1, 2, 3, nil, false]
+    eql(items.select_map{|x| x}, [0,1,2,3])
+    eql(Rearmed.select_map(items){|x| x}, [0,1,2,3])
 
-    # Only available on array and hash in Ruby 2.2.x or below
-    array = [{foo: ['foo','bar']}, {test: 'thing'}]
-
-    eql(array.dig(0, :foo, 1), 'bar')
-    assert_nil(array.dig(0, :foo, 2))
-
-    eql(Rearmed.dig(array, 1, :test), 'thing')
-    assert_nil(Rearmed.dig(array, 1, :bar))
-
-    hash = {a: {foo: ['bar']}, b: {c: 'c'}}
-    
-    eql(hash.dig(:a, :foo, 0), 'bar')
-    eql(Rearmed.dig(hash, :b, :c), 'c')
+    assert items.select_map.is_a?(Enumerator)
+    assert Rearmed.select_map(items).is_a?(Enumerator)
   end
 
   def test_array
@@ -123,6 +130,12 @@ class TestRearmed < MiniTest::Test
     eql(array, [1,2,1,3,4,1])
 
     eql(array.not_empty?, true)
+
+    array = [{foo: ['foo','bar']}, {test: 'thing'}]
+    eql(array.dig(0, :foo, 1), 'bar')
+    assert_nil(array.dig(0, :foo, 2))
+    eql(Rearmed.dig(array, 1, :test), 'thing')
+    assert_nil(Rearmed.dig(array, 1, :bar))
   end
   
   def test_hash
@@ -164,6 +177,10 @@ class TestRearmed < MiniTest::Test
     assert(struct.is_a?(Struct))
     eql(struct.foo, :bar)
     eql(struct.bar, 'foo')
+
+    hash = {a: {foo: ['bar']}, b: {c: 'c'}}
+    eql(hash.dig(:a, :foo, 0), 'bar')
+    eql(Rearmed.dig(hash, :b, :c), 'c')
   end
 
   def test_object

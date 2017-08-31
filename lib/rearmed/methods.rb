@@ -1,5 +1,9 @@
 module Rearmed
 
+  def self.casecmp?(str1, str2)
+    str1.casecmp(str2) == 0
+  end
+
   def self.dig(collection, *values)
     current_val = nil
     current_collection = collection
@@ -35,6 +39,10 @@ module Rearmed
     return current_val
   end
 
+  def self.hash_compact(hash)
+    hash.reject{|_, value| value.nil?}
+  end
+
   def self.hash_join(hash, delimiter=', ', &block)
     unless block_given?
       block = ->(k,v){ "#{k}: #{v}" }
@@ -57,15 +65,24 @@ module Rearmed
     return str
   end
 
-  def self.natural_sort_by(array)
-    array.sort_by{|x| self.naturalize_str(yield(x))}
+  def self.hash_only(hash, *keys)
+    keys.map!{|key| hash.convert_key(key)} if hash.respond_to?(:convert_key, true)
+    keys.each_with_object(hash.class.new){|k, new_hash| new_hash[k] = hash[k] if hash.has_key?(k)}
   end
 
-  def self.natural_sort(array, options={})
+  def self.hash_to_struct(hash)
+    Struct.new(*hash.keys).new(*hash.values)
+  end
+
+  def self.natural_sort_by(collection)
+    collection.sort_by{|x| self.naturalize_str(yield(x))}
+  end
+
+  def self.natural_sort(collection, options={})
     if block_given?
       Rearmed::Exceptions::BlockFoundError
     else
-      array.sort do |a,b| 
+      collection.sort do |a,b| 
         if options[:reverse] == true
           self.naturalize_str(b.to_s) <=> self.naturalize_str(a.to_s)
         else
@@ -74,14 +91,13 @@ module Rearmed
       end
     end
   end
-  
-  def self.hash_compact(hash)
-    hash.reject{|_, value| value.nil?}
-  end
 
-  def self.hash_only(hash, *keys)
-    keys.map!{|key| hash.convert_key(key)} if hash.respond_to?(:convert_key, true)
-    keys.each_with_object(hash.class.new){|k, new_hash| new_hash[k] = hash[k] if hash.has_key?(k)}
+  def self.select_map(collection)
+    if block_given?
+      collection.select{|x| yield(x) }.map{|x| yield(x) }
+    else
+      collection.select.map
+    end
   end
 
   def self.to_bool(str)
@@ -100,10 +116,6 @@ module Rearmed
 
   def self.valid_float?(str)
     str =~ /(^(\d+)(\.)?(\d+)?$)|(^(\d+)?(\.)(\d+)$)/ ? true : false
-  end
-
-  def self.hash_to_struct(hash)
-    Struct.new(*hash.keys).new(*hash.values)
   end
 
   private

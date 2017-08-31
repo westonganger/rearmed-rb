@@ -9,7 +9,8 @@
   },
   enumerable: {
     natural_sort: false,
-    natural_sort_by: false
+    natural_sort_by: false,
+    select_map: false
   },
   hash: {
     compact: false,
@@ -24,6 +25,7 @@
   },
   string: {
     begins_with: false,
+    casecmp?: false,
     ends_with: false,
     starts_with: false,
     to_bool: false,

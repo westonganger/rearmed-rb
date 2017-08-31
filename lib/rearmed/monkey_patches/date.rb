@@ -1,9 +1,13 @@
-date_enabled = Rearmed.enabled_patches[:date] == true
+if Rearmed.enabled_patches[:date] == true || Rearmed.dig(Rearmed.enabled_patches, :date, :now)
 
-Date.class_eval do
-  if date_enabled || Rearmed.dig(Rearmed.enabled_patches, :date, :now)
+  require 'date'
+
+  Date.class_eval do
+
     def self.now
       DateTime.now.to_date
     end
+
   end
+
 end

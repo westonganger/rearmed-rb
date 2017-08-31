@@ -36,7 +36,8 @@ Rearmed.enabled_patches = {
   },
   enumerable: {
     natural_sort: false,
-    natural_sort_by: false
+    natural_sort_by: false,
+    select_map: false
   },
   hash: {
     compact: false,
@@ -51,6 +52,7 @@ Rearmed.enabled_patches = {
   },
   string: {
     begins_with: false,
+    casecmp?: false
     ends_with: false,
     starts_with: false,
     to_bool: false,
@@ -91,6 +93,10 @@ items.natural_sort(reverse: true) # because natural_sort does not accept a block
 items = [{version: "1.1"}, {version: "1.11"}, {version: "1.2"}]
 items.natural_sort_by{|x| x[:version]} 
 # or without monkey patch: Rearmed.natural_sort_by(items){|x| x[:version]}
+
+items = [{version: "1.1"}, {version: nil}, {version: false}]
+items.select_map{|x| x[:version]} #=> [{version: "1.1"}]
+# or without monkey patch: Rearmed.select_map(items){|x| x[:version]}
 ```
 
 ## Date
@@ -133,6 +139,10 @@ my_var.in?(1,2,3) # or with splat arguments
 
 ## String
 ```ruby
+'foo'.casecmp?('FOO') #=> true
+'foo'.casecmp?('FOOBAR') #=> false
+# or without monkey patch: Rearmed.casecmp?('foo', 'FOO')
+
 '123'.valid_integer?
 # or without monkey patch: Rearmed.valid_integer?('123')
 
