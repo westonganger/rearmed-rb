@@ -3,7 +3,7 @@ CHANGELOG
 
 - **1.3.1 - Unreleased**
   - Add `Enumerable#select_map`
-  - Add `String#casecmp?`
+  - Add `String#casecmp?` for Ruby 2.3.x and below
   - Fix ruby 1.9.3 lambda syntax cannot contain space between stab and parenthesis
 - **1.3.0 - Feb 28, 2017**
   - Remove Rails and Minitest methods. Those methods moved to https://github.com/westonganger/rearmed_rails

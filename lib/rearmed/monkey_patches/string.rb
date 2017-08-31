@@ -1,6 +1,18 @@
 string_enabled = Rearmed.enabled_patches[:string] == true
 
 String.class_eval do
+  if !''.respond_to?(:casecmp?) && (string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :casecmp?))
+    def casecmp?(str)
+      Rearmed.casecmp?(self, str)
+    end
+  end
+
+  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :to_bool)
+    def to_bool
+      Rearmed.to_bool(self)
+    end
+  end
+
   if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_integer)
     def valid_integer?
       Rearmed.valid_integer?(self)
@@ -10,12 +22,6 @@ String.class_eval do
   if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_float)
     def valid_float?
       Rearmed.valid_float?(self)
-    end
-  end
-
-  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :to_bool)
-    def to_bool
-      Rearmed.to_bool(self)
     end
   end
 

@@ -1,7 +1,9 @@
 module Rearmed
 
   def self.casecmp?(str1, str2)
-    str1.casecmp(str2) == 0
+    if str1.is_a?(String) && str2.is_a?(String)
+      str1.casecmp(str2) == 0
+    end
   end
 
   def self.dig(collection, *values)

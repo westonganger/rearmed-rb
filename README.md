@@ -77,7 +77,7 @@ puts array # => [4,1]
 
 array.not_empty? # => true
 
-# Only monkey patched if using Ruby 2.2.x or below
+# Only monkey patched if using Ruby 2.2.x or below as this method was added to Ruby core in 2.3.0
 items = [{foo: ['foo','bar']}, {test: 'thing'}]
 items.dig(0, :foo, 1) # => 'bar'
 # or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
@@ -117,12 +117,12 @@ hash.only!(:foo, :bar)
 hash.to_struct
 # or without monkey patch: Rearmed.hash_to_struct(hash)
 
-# Only monkey patched if using Ruby 2.2.x or below
+# Only monkey patched if using Ruby 2.2.x or below as this method was added to Ruby core in 2.3.0
 items = [{foo: ['foo','bar']}, {test: 'thing'}]
 items.dig(0, :foo, 1) # => 'bar'
 # or without monkey patch: Rearmed.dig(items, 0, :foo, 1)
 
-# Only monkey patched if using Ruby 2.3.x or below
+# Only monkey patched if using Ruby 2.3.x or below as this method was added to Ruby core in 2.4.0
 hash.compact
 # or without monkey patch: Rearmed.hash_compact(hash)
 hash.compact!
@@ -139,10 +139,6 @@ my_var.in?(1,2,3) # or with splat arguments
 
 ## String
 ```ruby
-'foo'.casecmp?('FOO') #=> true
-'foo'.casecmp?('FOOBAR') #=> false
-# or without monkey patch: Rearmed.casecmp?('foo', 'FOO')
-
 '123'.valid_integer?
 # or without monkey patch: Rearmed.valid_integer?('123')
 
@@ -156,6 +152,11 @@ my_var.in?(1,2,3) # or with splat arguments
 'foo'.starts_with?('fo') # => true
 'foo'.begins_with?('fo') # => true
 'bar'.ends_with?('ar') # => true
+
+# Only monkey patched if using Ruby 2.3.x or below as this method was added to Ruby core in 2.4.0
+'foo'.casecmp?('FOO') #=> true
+'foo'.casecmp?('FOOBAR') #=> false
+# or without monkey patch: Rearmed.casecmp?('foo', 'FOO')
 ```
 
 # Contributing / Todo
