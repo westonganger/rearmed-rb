@@ -2,9 +2,7 @@
 
 <a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
-A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates. [Rearmed is a collection of plugins](https://github.com/westonganger?utf8=%E2%9C%93&tab=repositories&q=rearmed) which are driven by making life easier & coding more natural.
-
-I have recently extracted the Rails and Minitest monkey patches to another gem https://github.com/westonganger/rearmed_rails because the Rails methods are getting quite extensive.
+A collection of helpful methods and monkey patches for Arrays, Hash, Enumerables, Strings, Objects & Dates in Ruby. [Rearmed is a collection of plugins](https://github.com/westonganger?utf8=%E2%9C%93&tab=repositories&q=rearmed) which are driven by making life easier & coding more natural.
 
 The difference between this library and others is that all monkey patching is performed in an opt-in way because you shouldnt be using methods you dont know about anyways. 
 
@@ -168,7 +166,11 @@ If you want to contribute here are a couple of things you could do:
 
 
 # Credits
+Created by Weston Ganger - [@westonganger](https://github.com/westonganger)
 
-Created and Maintained by [Weston Ganger - @westonganger](https://github.com/westonganger)
+For any consulting or contract work please contact me via my company website: [Solid Foundation Web Development](https://solidfoundationwebdev.com)
 
-<a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
+## Similar Libraries Created By Me
+- [Rearmed Rails](https://github.com/westonganger/rearmed_rails)
+- [Rearmed-JS](https://github.com/westonganger/rearmed-js)
+- [Rearmed-CSS](https://github.com/westonganger/rearmed-css)

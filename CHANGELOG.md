@@ -1,7 +1,7 @@
 CHANGELOG
 ---------
 
-- **1.3.1 - Unreleased**
+- **1.3.1 - Sept 2, 2017**
   - Add `Enumerable#select_map`
   - Add `String#casecmp?` for Ruby 2.3.x and below
   - Fix ruby 1.9.3 lambda syntax cannot contain space between stab and parenthesis
