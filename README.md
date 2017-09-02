@@ -50,7 +50,7 @@ Rearmed.enabled_patches = {
   },
   string: {
     begins_with: false,
-    casecmp?: false
+    casecmp?: false,
     ends_with: false,
     starts_with: false,
     to_bool: false,
