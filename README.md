@@ -18,7 +18,7 @@ gem 'rearmed'
 
 # Usage
 
-## Setup Enabled Monkey Patches (all are optional)
+## Enable Monkey Patches (all are opt-in)
 
 ```ruby
 # config/initializers/rearmed.rb
