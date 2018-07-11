@@ -21,7 +21,7 @@ gem 'rearmed'
 
 # Usage
 
-## Enable Monkey Patches (all are opt-in)
+## Setup Monkey Patches (all are opt-in)
 
 ```ruby
 # config/initializers/rearmed.rb
@@ -70,11 +70,10 @@ Rearmed.enabled_patches = {
   }
 }
 
-
-require 'rearmed/apply_patches'
+Rearmed.apply_patches!
 ```
 
-Some other arguments the `enabled_patches` option accepts are:
+Some other argument formats the `enabled_patches` option accepts are:
 
 ```ruby
 ### Enable everything
@@ -96,6 +95,8 @@ Rearmed.enabled_patches = {
   string: nil
 }
 ```
+
+By design, once `Rearmed.apply_patches!` is called then `Rearmed.enabled_patches` is no longer editable and `Rearmed.apply_patches!` cannot be called again. If you try to do so, it will raise a `PatchesAlreadyAppliedError`. There is no-built in way of changing the patches, if you need to do so (which you shouldn't) that is up to you to figure out.
 
 ## Array Methods
 ```ruby
@@ -201,11 +202,11 @@ my_var.false? # if is false boolean value
 ```
 
 # Contributing / Todo
-If you want to request a method please raise an issue and we can discuss the implementation. 
-
-If you want to contribute here are a couple of things you could do:
+If your looking to contribute here is a list of outstanding items:
 
 - Get the `natural_sort` method to accept a block
+
+To request or add a method, please raise an issue and we can discuss the implementation. 
 
 
 # Credits
@@ -213,7 +214,7 @@ Created by Weston Ganger - [@westonganger](https://github.com/westonganger)
 
 For any consulting or contract work please contact me via my company website: [Solid Foundation Web Development](https://solidfoundationwebdev.com)
 
-## Similar Libraries Created By Me
+## Other Libraries in the Rearmed family of Plugins
 - [Rearmed Rails](https://github.com/westonganger/rearmed_rails)
 - [Rearmed-JS](https://github.com/westonganger/rearmed-js)
 - [Rearmed-CSS](https://github.com/westonganger/rearmed-css)

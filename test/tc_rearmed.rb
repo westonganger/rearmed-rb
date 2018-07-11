@@ -6,14 +6,14 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'minitest'
 require 'minitest/autorun'
 
-Minitest::Assertions.module_eval do
-  alias_method :eql, :assert_equal
-end
-
 require 'rearmed'
 
 Rearmed.enabled_patches = :all
-require 'rearmed/apply_patches'
+Rearmed.apply_patches!
+
+Minitest::Assertions.module_eval do
+  alias_method :eql, :assert_equal
+end
 
 class TestRearmed < MiniTest::Test
   def setup
