@@ -1,6 +1,9 @@
-# Rearmed Ruby <a href='https://travis-ci.org/westonganger/rearmed-rb' target='_blank'><img src='https://api.travis-ci.org/westonganger/rearmed-rb.svg?branch=master' border='0' alt='Build Status' /></a> 
+# Rearmed Ruby
 
-<a href='https://ko-fi.com/A5071NK' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
+<a href="https://badge.fury.io/rb/rearmed" target="_blank"><img height="21" style='border:0px;height:21px;' border='0' src="https://badge.fury.io/rb/rearmed.svg" alt="Gem Version"></a>
+<a href='https://travis-ci.org/westonganger/rearmed-rb' target='_blank'><img height='21' style='border:0px;height:21px;' src='https://api.travis-ci.org/westonganger/rearmed-rb.svg?branch=master' border='0' alt='Build Status' /></a>
+<a href='https://rubygems.org/gems/rearmed' target='_blank'><img height='21' style='border:0px;height:21px;' src='https://ruby-gem-downloads-badge.herokuapp.com/rearmed?label=rubygems&type=total&total_label=downloads&color=brightgreen' border='0' alt='RubyGems Downloads' /></a>
+<a href='https://ko-fi.com/A5071NK' target='_blank'><img height='22' style='border:0px;height:22px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=a' border='0' alt='Buy Me a Coffee' /></a> 
 
 A collection of helpful methods and monkey patches for Arrays, Hash, Enumerables, Strings, Objects & Dates in Ruby. [Rearmed is a collection of plugins](https://github.com/westonganger?utf8=%E2%9C%93&tab=repositories&q=rearmed) which are driven by making life easier & coding more natural.
 
@@ -25,8 +28,8 @@ gem 'rearmed'
 
 Rearmed.enabled_patches = {
   array: {
-    dig: false,
     delete_first: false,
+    dig: false,
     not_empty: false
   },
   date: {
@@ -44,18 +47,26 @@ Rearmed.enabled_patches = {
     only: false,
     to_struct: false
   },
+  integer: {
+    length: false
+  },
   object: {
+    bool?: false,
+    false?: false,
     in: false,
-    not_nil: false
+    not_nil: false,
+    true?: false
   },
   string: {
     begins_with: false,
     casecmp?: false,
     ends_with: false,
+    match?: false,
     starts_with: false,
     to_bool: false,
     valid_float: false,
-    valid_integer: false
+    valid_integer: false,
+    valid_number: false
   }
 }
 
@@ -133,6 +144,10 @@ my_var.not_nil?
 # Only monkey patched if not using ActiveSupport / Rails as this method is already defined there
 my_var.in?([1,2,3])
 my_var.in?(1,2,3) # or with splat arguments
+
+my_var.bool? # if is true or false boolean value
+my_var.true? # if is true boolean value
+my_var.false? # if is false boolean value
 ```
 
 ## String
@@ -143,8 +158,13 @@ my_var.in?(1,2,3) # or with splat arguments
 '123.123'.valid_float? 
 # or without monkey patch: Rearmed.valid_float?('123.123')
 
+'123.123'.valid_number? 
+# or without monkey patch: Rearmed.valid_number?('123.123')
+
 'true'.to_bool 
 # or without monkey patch: Rearmed.to_bool('true')
+
+'foo'.match?(/fo/) #=> true, this method returns a convenient boolean value instead of matchdata
 
 # alias of start_with? and end_with? to have more sensible method names
 'foo'.starts_with?('fo') # => true

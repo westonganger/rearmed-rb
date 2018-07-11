@@ -120,6 +120,10 @@ module Rearmed
     str =~ /(^(\d+)(\.)?(\d+)?$)|(^(\d+)?(\.)(\d+)$)/ ? true : false
   end
 
+  def self.valid_number?(val)
+    Float(val) != nil rescue false
+  end
+
   private
   
   def self.naturalize_str(str)

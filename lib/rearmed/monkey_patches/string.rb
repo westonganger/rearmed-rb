@@ -13,6 +13,18 @@ String.class_eval do
     end
   end
 
+  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :match?)
+    def match?(pattern, pos=0)
+      match(pattern, pos).not_nil?
+    end
+  end
+
+  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_number)
+    def valid_number?
+      Rearmed.valid_number?(self)
+    end
+  end
+
   if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_integer)
     def valid_integer?
       Rearmed.valid_integer?(self)

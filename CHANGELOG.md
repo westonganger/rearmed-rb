@@ -1,6 +1,9 @@
 CHANGELOG
 ---------
 
+- **UNRELEASED**
+  - TODO: Add tests for new methods listed below.
+  - Add `Integer#length`, `Object#bool?`, `Object#true?`, `Object#false?`, `String#match?`, `String#valid_number?`
 - **1.3.1 - Sept 2, 2017**
   - Add `Enumerable#select_map`
   - Add `String#casecmp?` for Ruby 2.3.x and below
