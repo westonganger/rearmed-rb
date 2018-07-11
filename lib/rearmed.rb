@@ -28,9 +28,9 @@ module Rearmed
       elsif val == :all
         @enabled_patches = val
       elsif val.is_a?(Hash)
-        keys = DEFAULT_PATCHES.keys
+        @enabled_patches = {}
 
-        keys.each do |k|
+        DEFAULT_PATCHES.keys.each do |k|
           methods = val[k] || val[k.to_sym]
           if methods
             if methods.is_a?(Hash) || methods == true

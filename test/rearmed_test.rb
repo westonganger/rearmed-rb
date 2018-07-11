@@ -6,16 +6,16 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'minitest'
 require 'minitest/autorun'
 
+Minitest::Assertions.module_eval do
+  alias_method :eql, :assert_equal
+end
+
 require 'rearmed'
 
 Rearmed.enabled_patches = :all
 Rearmed.apply_patches!
 
-Minitest::Assertions.module_eval do
-  alias_method :eql, :assert_equal
-end
-
-class TestRearmed < MiniTest::Test
+class RearmedTest < MiniTest::Test
   def setup
   end
 
@@ -206,6 +206,36 @@ class TestRearmed < MiniTest::Test
     assert_equal 1000.length, 4
 
     assert_equal (-1000).length, 4
+  end
+
+  def test_enabled_patches
+    Rearmed.instance_variable_set(:@applied, false)
+
+    default = Rearmed.const_get(:DEFAULT_PATCHES)
+
+    Rearmed.enabled_patches = nil
+    assert_equal Rearmed.enabled_patches, default
+
+    Rearmed.enabled_patches = {}
+    assert_equal Rearmed.enabled_patches, default
+
+    Rearmed.enabled_patches = :all
+    assert_equal Rearmed.enabled_patches, :all
+
+    Rearmed.enabled_patches = {array: true, foo: :foo, hash: nil, enumerable: false, date: {test: :test}}
+    assert_equal Rearmed.enabled_patches, default.merge({array: true, date: {test: :test}})
+
+    [true, false, [], '', 1, :foo, Rearmed].each do |x|
+      assert_raises TypeError do
+        Rearmed.enabled_patches = x
+      end
+
+      unless x.bool?
+        assert_raises TypeError do
+          Rearmed.enabled_patches = {array: x}
+        end
+      end
+    end
   end
 
 end

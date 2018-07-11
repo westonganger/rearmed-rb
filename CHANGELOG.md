@@ -7,7 +7,8 @@ CHANGELOG
   - Once `apply_patches!` has been called, then `enabled_patches` cannot be changed. If it is, it will raise a `PatchesAlreadyAppliedError`
   - Allow setting `:all` for `Rearmed#enabled_patches=`
   - Add type checking to `Rearmed#enabled_patches=`
-  - Add `Integer#length`, `Object#bool?`, `Object#true?`, `Object#false?`, `String#match?`, `String#valid_number?`
+  - Add type checking to all generic `Rearmed` methods
+  - Add `Integer#length`, `Object#bool?`, `Object#true?`, `Object#false?`, `String#match?`, `String#valid_number?`, `Rearmed.valid_number?`
 - **1.3.1 - Sept 2, 2017**
   - Add `Enumerable#select_map`
   - Add `String#casecmp?` for Ruby 2.3.x and below
