@@ -1,4 +1,4 @@
-integer_enabled = Rearmed.enabled_patches[:integer] == true
+integer_enabled = Rearmed.enabled_patches == :all || Rearmed.enabled_patches[:integer] == true
 
 Integer.class_eval do
 

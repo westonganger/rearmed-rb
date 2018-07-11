@@ -74,6 +74,29 @@ Rearmed.enabled_patches = {
 require 'rearmed/apply_patches'
 ```
 
+Some other arguments the `enabled_patches` option accepts are:
+
+```ruby
+### Enable everything
+Rearmed.enabled_patches = :all
+
+### Disable everything
+Rearmed.enabled_patches = nil
+
+### Hash values can be boolean/nil values also
+Rearmed.enabled_patches = {
+  array: true, 
+  date: {
+    now: true
+  },
+  enumerable: true, 
+  hash: false, 
+  integer: false, 
+  object: nil, 
+  string: nil
+}
+```
+
 ## Array Methods
 ```ruby
 array = [1,2,1,4,1]

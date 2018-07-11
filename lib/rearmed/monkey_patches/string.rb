@@ -1,4 +1,4 @@
-string_enabled = Rearmed.enabled_patches[:string] == true
+string_enabled = Rearmed.enabled_patches == :all || Rearmed.enabled_patches[:string] == true
 
 String.class_eval do
   if !''.respond_to?(:casecmp?) && (string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :casecmp?))

@@ -1,4 +1,4 @@
-object_enabled = Rearmed.enabled_patches[:object] == true
+object_enabled = Rearmed.enabled_patches == :all || Rearmed.enabled_patches[:object] == true
 
 Object.class_eval do
   if object_enabled || Rearmed.dig(Rearmed.enabled_patches, :object, :not_nil)

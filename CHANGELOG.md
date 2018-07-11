@@ -1,9 +1,12 @@
 CHANGELOG
 ---------
 
-- **UNRELEASED**
-  - TODO: Add tests for new methods listed below.
+- **1.4.0 - UNRELEASED**
+  - TODO: Add tests for methods listed below.
   - Add `Integer#length`, `Object#bool?`, `Object#true?`, `Object#false?`, `String#match?`, `String#valid_number?`
+  - Add type checking to `Rearmed#enabled_patches=`
+  - Allow setting `:all` for `Rearmed#enabled_patches=`
+  - Improve `apply_patches` method to dynamically require all patches instead of manually which could be error prone
 - **1.3.1 - Sept 2, 2017**
   - Add `Enumerable#select_map`
   - Add `String#casecmp?` for Ruby 2.3.x and below

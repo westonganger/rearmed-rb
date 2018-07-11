@@ -1,4 +1,4 @@
-hash_enabled = Rearmed.enabled_patches[:hash] == true
+hash_enabled = Rearmed.enabled_patches == :all || Rearmed.enabled_patches[:hash] == true
 
 Hash.class_eval do
   if !{}.respond_to?(:compact) && (hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :compact))

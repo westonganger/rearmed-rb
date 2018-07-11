@@ -3,36 +3,26 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require 'yaml'
 require 'minitest'
+require 'minitest/autorun'
+
+Minitest::Assertions.module_eval do
+  alias_method :eql, :assert_equal
+end
 
 require 'rearmed'
 
-require 'minitest/autorun'
+Rearmed.enabled_patches = :all
+require 'rearmed/apply_patches'
 
 class TestRearmed < MiniTest::Test
   def setup
-    Minitest::Assertions.module_eval do
-      alias_method :eql, :assert_equal
-    end
+  end
 
-    Rearmed.enabled_patches = {
-      array: true,
-      hash: true,
-      object: true,
-      string: true,
-      date: true,
-      enumerable: true,
-      rails_3: true,
-      rails_4: true,
-      rails: true,
-      minitest: true
-    }
-    require 'rearmed/apply_patches'
+  def teardown
   end
 
   def test_string
-    # Test String Methods
     str = '32'
     eql(str.valid_integer?, true)
 
@@ -94,7 +84,7 @@ class TestRearmed < MiniTest::Test
   end
 
   def test_date
-    Date.now
+    assert_equal Date.now, Date.today
   end
 
   def test_enumerable
@@ -210,6 +200,12 @@ class TestRearmed < MiniTest::Test
 
     str = 'test'
     eql(str.in?('a real string'), false)
+  end
+
+  def test_integer
+    assert_equal 1000.length, 4
+
+    assert_equal (-1000).length, 4
   end
 
 end

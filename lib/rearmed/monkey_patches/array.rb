@@ -1,4 +1,4 @@
-array_enabled = Rearmed.enabled_patches[:array] == true
+array_enabled = Rearmed.enabled_patches == :all || Rearmed.enabled_patches[:array] == true
 
 Array.module_eval do
   if array_enabled || Rearmed.dig(Rearmed.enabled_patches, :array, :not_empty)

@@ -1,4 +1,4 @@
-enumerable_enabled = Rearmed.enabled_patches[:enumerable] == true
+enumerable_enabled = Rearmed.enabled_patches == :all || Rearmed.enabled_patches[:enumerable] == true
 
 Enumerable.module_eval do 
   if enumerable_enabled || Rearmed.dig(Rearmed.enabled_patches, :enumerable, :natural_sort_by)
