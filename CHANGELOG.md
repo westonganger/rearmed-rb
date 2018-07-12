@@ -1,16 +1,14 @@
 CHANGELOG
 ---------
 
-- **2.0.0 - UNRELEASED**
-  - Rename all generic `Rearmed` methods to their respective object type subclass. Three examples:
+- **2.0.0 - July 11, 2018**
+  - Rename all generic `Rearmed` methods to their respective object type subclass and add type checking. Three examples:
     - `Rearmed.casecmp?(str1, str2)` changed to `Rearmed::String.casecmp?(str1, str2)`
     - `Rearmed.hash_join(h)` changed to `Rearmed::Hash.join?(h)`
     - `Rearmed.dig` is the only exception will remained at the global `Rearmed` namespace. This method is shared by both Array and Hash and also is used internally throughout the library.
-  - Add type checking to all `Rearmed` namespaced methods
-  - Change method of applying patches from `require 'rearmed/apply_patches'` to `Rearmed#apply_patches!`
-  - Once `apply_patches!` has been called, then `enabled_patches` cannot be changed. If it is, it will raise a `PatchesAlreadyAppliedError`
+  - Change method of applying patches from `require 'rearmed/apply_patches'` to `Rearmed#apply_patches!`. Once `apply_patches!` has been called, then `enabled_patches` cannot be changed. If it is, it will raise a `PatchesAlreadyAppliedError`
+  - Overhaul `Rearmed#enabled_patches=` method with type checking
   - Allow setting `:all` for `Rearmed#enabled_patches=`
-  - Add type checking to `Rearmed#enabled_patches=`
   - Add `Integer#length`, `Object#bool?`, `Object#true?`, `Object#false?`, `String#match?`. These methods were all borrowed from [`finishing_moves`](https://github.com/forgecrafted/finishing_moves), Thanks!
 - **1.3.1 - Sept 2, 2017**
   - Add `Enumerable#select_map`
