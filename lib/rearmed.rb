@@ -23,17 +23,17 @@ module Rearmed
     if @applied
       raise ::Rearmed::Exceptions::PatchesAlreadyAppliedError.new
     else
-      if val.nil?
+      if [nil, {}].include?(val)
         @enabled_patches = Marshal.load(Marshal.dump(DEFAULT_PATCHES)) 
       elsif val == :all
         @enabled_patches = val
-      elsif val.is_a?(Hash)
+      elsif val.is_a?(::Hash)
         @enabled_patches = {}
 
         DEFAULT_PATCHES.keys.each do |k|
           methods = val[k] || val[k.to_sym]
           if methods
-            if methods.is_a?(Hash) || methods == true
+            if methods.is_a?(::Hash) || methods == true
               @enabled_patches[k] = methods
             else
               raise TypeError.new('Invalid value within the hash passed to Rearmed.enabled_patches=')
