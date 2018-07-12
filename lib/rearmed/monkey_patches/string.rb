@@ -19,12 +19,6 @@ String.class_eval do
     end
   end
 
-  if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_number)
-    def valid_number?
-      Rearmed.valid_number?(self)
-    end
-  end
-
   if string_enabled || Rearmed.dig(Rearmed.enabled_patches, :string, :valid_integer)
     def valid_integer?
       Rearmed.valid_integer?(self)

@@ -65,8 +65,7 @@ Rearmed.enabled_patches = {
     starts_with: false,
     to_bool: false,
     valid_float: false,
-    valid_integer: false,
-    valid_number: false
+    valid_integer: false
   }
 }
 
