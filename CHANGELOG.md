@@ -1,6 +1,10 @@
 CHANGELOG
 ---------
 
+
+- **2.0.1 - UNRELEASED**
+  - Fix Ruby 1.9.3 support. Do not use `__dir__` because Ruby 1.9.3 does not support it.
+  - Fix tests. Add `wwtd` for better local testing.
 - **2.0.0 - July 11, 2018**
   - Rename all generic `Rearmed` methods to their respective object type subclass and add type checking. Three examples:
     - `Rearmed.casecmp?(str1, str2)` changed to `Rearmed::String.casecmp?(str1, str2)`

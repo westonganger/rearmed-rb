@@ -40,7 +40,7 @@ class RearmedTest < MiniTest::Test
     end
   end
 
-  def test_string_valid_integer?
+  def test_string_float?
     str = '132.2'
     eql(str.valid_float?, true)
 
@@ -91,8 +91,23 @@ class RearmedTest < MiniTest::Test
     str2 = 'fo'
     eql(str1.casecmp?(str2), false)
 
-    str2 = true
-    eql(str1.casecmp?(str2), nil)
+    if RUBY_VERSION.to_f == 2.4
+      assert_raises TypeError do
+        str2 = true
+        eql(str1.casecmp?(str2), nil)
+      end
+
+      assert_raises TypeError do
+        str2 = []
+        eql(str1.casecmp?(str2), nil)
+      end
+    else
+      str2 = true
+      eql(str1.casecmp?(str2), nil)
+
+      str2 = []
+      eql(str1.casecmp?(str2), nil)
+    end
 
     str2 = 'foo'
     eql(Rearmed::String.casecmp?(str1, str2), true)
