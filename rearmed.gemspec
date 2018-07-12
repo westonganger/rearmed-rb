@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage 	= 'https://github.com/westonganger/rearmed-rb'
   
   s.summary     = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails"
-  s.description = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails"
+  s.description = s.summary 
   s.files = Dir.glob("{lib/**/*}") + %w{ LICENSE README.md Rakefile CHANGELOG.md }
   s.test_files  = Dir.glob("{test/**/*}")
 

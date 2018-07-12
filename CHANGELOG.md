@@ -2,7 +2,7 @@ CHANGELOG
 ---------
 
 
-- **2.0.1 - UNRELEASED**
+- **2.0.1 - July 12, 2018**
   - Fix Ruby 1.9.3 support. Do not use `__dir__` because Ruby 1.9.3 does not support it.
   - Fix tests. Add `wwtd` for better local testing.
 - **2.0.0 - July 11, 2018**
