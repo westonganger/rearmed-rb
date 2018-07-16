@@ -2,7 +2,7 @@ CHANGELOG
 ---------
 
 
-- **2.0.2 - UNRELEASED**
+- **2.0.2 - July 15, 2018**
   - Fix bug where `String#valid_integer?` would return true on empty strings
   - Change `String#to_bool` to use a case-insensitive match to allow uppercase values such as `TRUE` and `FALSE`
   - Fix bug where multi-line strings could return a false positive status if one line matched. This bug affected the following methods: `String#valid_integer?`, `String#valid_float?`, `String#to_bool`. The problem was related to using the wrong anchor which matched the beginning/end of the line instead of the beginning/end of entire string. 
