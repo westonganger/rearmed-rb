@@ -139,9 +139,9 @@ module Rearmed
   module String
     def self.to_bool(str)
       if str.is_a?(::String)
-        if str =~ /^(true|1|t|T)$/
+        if str =~ /\A(true|1|t)\z/i
           true
-        elsif str =~ /^(false|0|f|F)$/
+        elsif str =~ /\A(false|0|f)\z/i
           false
         else
           nil
@@ -153,7 +153,7 @@ module Rearmed
 
     def self.valid_integer?(str)
       if str.is_a?(::String)
-        str =~ /^\d*$/ ? true : false
+        str =~ /\A\d+\z/ ? true : false
       else
         raise TypeError.new("Invalid object passed to #{__method__}")
       end
@@ -161,7 +161,7 @@ module Rearmed
 
     def self.valid_float?(str)
       if str.is_a?(::String)
-        str =~ /(^(\d+)(\.)?(\d+)?$)|(^(\d+)?(\.)(\d+)$)/ ? true : false
+        str =~ /(\A(\d+)(\.)?(\d+)?\z)|(\A(\d+)?(\.)(\d+)\z)/ ? true : false
       else
         raise TypeError.new("Invalid object passed to #{__method__}, must be a String")
       end

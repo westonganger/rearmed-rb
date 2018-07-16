@@ -32,6 +32,15 @@ class RearmedTest < MiniTest::Test
     str = '32a'
     eql(str.valid_integer?, false)
 
+    str = "32a\n32"
+    eql(str.valid_integer?, false)
+
+    str = "32\n32a"
+    eql(str.valid_integer?, false)
+
+    str = ""
+    eql(str.valid_integer?, false)
+
     str = '12'
     eql(Rearmed::String.valid_integer?(str), true)
 
@@ -50,6 +59,15 @@ class RearmedTest < MiniTest::Test
     str = '12.1a'
     eql(str.valid_float?, false)
 
+    str = "12.1a\n12.1"
+    eql(str.valid_float?, false)
+
+    str = "12.1\n12.1a"
+    eql(str.valid_float?, false)
+
+    str = ""
+    eql(str.valid_float?, false)
+
     str = '1.2'
     eql(Rearmed::String.valid_float?(str), true)
 
@@ -59,14 +77,20 @@ class RearmedTest < MiniTest::Test
   end
 
   def test_string_to_bool
-    str = 'true'
-    eql(str.to_bool, true)
+    truthy_values = ['true', 'TRUE', 'TrUe', '1', 't', 'T']
+    truthy_values.each do |str|
+      eql(str.to_bool, true)
+    end
 
-    str = 'false'
-    eql(str.to_bool, false)
+    falsey_values = ['false', 'FALSE', 'FaLsE', '0', 'f', 'F']
+    falsey_values.each do |str|
+      eql(str.to_bool, false)
+    end
 
-    str = 'not true'
-    assert_nil(str.to_bool)
+    niley_values = ['not_true', "false\nbad", "bad\ntrue"]
+    niley_values.each do |str|
+      assert_nil(str.to_bool)
+    end
 
     str = 'true'
     eql(Rearmed::String.to_bool(str), true)
