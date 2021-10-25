@@ -48,6 +48,22 @@ module Rearmed
       end
     end
 
+    def self.deep_set(hash, keys_array, val)
+      if hash.is_a?(::Hash)
+        keys_array[0...-1].inject(hash){|result, key| 
+          if !result[key].is_a?(Hash)
+            result[key] = {}
+          end
+
+          result[key]
+        }.send(:[]=, keys_array.last, val)
+
+        return hash
+      else
+        raise TypeError.new("Invalid object passed to #{__method__}, must be a Hash")
+      end
+    end
+
     def self.join(hash, delimiter=', ', &block)
       if hash.is_a?(::Hash)
         unless block_given?

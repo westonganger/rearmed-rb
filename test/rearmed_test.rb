@@ -236,7 +236,7 @@ class RearmedTest < MiniTest::Test
     eql(hash, {foo: 'foo', bar: 'bar'})
   end
 
-  def test_has_compact
+  def test_hash_compact
     hash = {foo: nil, bar: nil, other: 'other'}
 
     eql(hash.compact, {other: 'other'})
@@ -248,6 +248,18 @@ class RearmedTest < MiniTest::Test
 
     hash.compact!
     eql(hash, {other: 'other'})
+  end
+
+  def test_hash_deep_set
+    eql(
+      {}.deep_set([:foo, :bar, 'other'], 'value'), 
+      {foo: {bar: {'other' => 'value'}}}
+    )
+
+    eql(
+      Rearmed::Hash.deep_set({}, [:foo, :bar, 'other'], 'value2'),
+      {foo: {bar: {'other' => 'value2'}}}
+    )
   end
 
   def test_hash_join

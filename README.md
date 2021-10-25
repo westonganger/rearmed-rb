@@ -158,6 +158,9 @@ items.dig(0, :foo, 1) # => 'bar'
 hash.compact
 # or without monkey patch: Rearmed.hash_compact(hash)
 hash.compact!
+
+hash.deep_set([:foo, :bar, :name], "John") # => {foo: {bar: {name: "John"}}}
+# or without monkey patch: Rearmed.hash_deep_set(hash, keys_array, value)
 ```
 
 ## Object

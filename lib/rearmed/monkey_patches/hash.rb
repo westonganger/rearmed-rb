@@ -11,6 +11,12 @@ Hash.class_eval do
     end
   end
 
+  if !{}.respond_to?(:deep_set) && (hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :deep_set))
+    def deep_set(keys_array, val)
+      Rearmed::Hash.deep_set(self, keys_array, val)
+    end
+  end
+
   if !{}.respond_to?(:dig) && (hash_enabled || Rearmed.dig(Rearmed.enabled_patches, :hash, :dig))
     def dig(*args)
       Rearmed.dig(self, *args)
