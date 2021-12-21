@@ -42,6 +42,7 @@ Rearmed.enabled_patches = {
   },
   hash: {
     compact: false,
+    deep_set: false,
     dig: false,
     join: false,
     only: false,
