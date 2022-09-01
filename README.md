@@ -215,8 +215,6 @@ To request or add a method, please raise an issue and we can discuss the impleme
 # Credits
 Created by Weston Ganger - [@westonganger](https://github.com/westonganger)
 
-For any consulting or contract work please contact me via my company website: [Solid Foundation Web Development](https://solidfoundationwebdev.com)
-
 ## Other Libraries in the Rearmed family of Plugins
 - [Rearmed Rails](https://github.com/westonganger/rearmed_rails)
 - [Rearmed-JS](https://github.com/westonganger/rearmed-js)
