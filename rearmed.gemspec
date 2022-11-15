@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
   s.summary     = "A collection of helpful methods and monkey patches for Objects, Strings, Enumerables, Arrays, Hash, Dates, Minitest & Rails"
   s.description = s.summary 
   s.files = Dir.glob("{lib/**/*}") + %w{ LICENSE README.md Rakefile CHANGELOG.md }
-  s.test_files  = Dir.glob("{test/**/*}")
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'minitest'
